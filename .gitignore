@@ -17,3 +17,4 @@ repository.xml.generated
 yarn.lock
 node
 node_modules
+src/main/resources/javascript/apps
