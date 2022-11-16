@@ -1,0 +1,19 @@
+# Eclipse
+/.classpath
+/.project
+/.settings
+
+# Intellij
+.idea
+*.iml
+*.ipr
+
+# Maven
+target
+
+# Jahia DX Studio
+repository.xml.generated
+
+yarn.lock
+node
+node_modules

@@ -1,0 +1,7 @@
+{
+    "label": {
+        "requestTranslation": "Request translation for {{languageDisplay}}",
+        "requestTranslationForAllLanguages": "Request translation for all languages",
+        "menu": "DeepL"
+    }
+}
