@@ -1,7 +1,9 @@
 {
     "label": {
-        "requestTranslation": "Request translation for {{languageDisplay}}",
-        "requestTranslationForAllLanguages": "Request translation for all languages",
+        "requestTranslation": "Translate <em>{{displayName}}</em> - {{languageDisplay}}",
+        "requestTranslationTree": "Translate all under <em>{{displayName}}</em> - {{languageDisplay}}",
+        "requestTranslationForAllLanguages": "Translate <em>{{displayName}}</em> in all languages",
+        "requestTranslationTreeForAllLanguages": "Translate all under <em>{{displayName}}</em> in all languages",
         "menu": "DeepL"
     }
 }

@@ -16,13 +16,4 @@
             <property name="deepLTranslatorService" ref="deeplTranslationService"/>
         </bean>
     </service>
-    <service interface="org.jahia.bin.Action">
-        <bean class="org.jahia.community.translation.deepl.actions.RequestTranslationForAllLanguagesAction">
-            <property name="name" value="requestTranslationForAllLanguagesAction"/>
-            <property name="requiredPermission" value="jcr:write_default"/>
-            <property name="requiredWorkspace" value="default"/>
-            <property name="requireAuthenticatedUser" value="true"/>
-            <property name="deepLTranslatorService" ref="deeplTranslationService"/>
-        </bean>
-    </service>
 </blueprint>
