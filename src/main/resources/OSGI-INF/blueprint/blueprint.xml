@@ -6,7 +6,14 @@
            http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd"
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0">
 
-    <bean id="deeplTranslationService" class="org.jahia.community.translation.deepl.service.impl.DeepLTranslatorServiceImpl"/>
+    <bean id="deeplTranslationService" class="org.jahia.community.translation.deepl.service.impl.DeepLTranslatorServiceImpl">
+        <property name="targetLanguages">
+            <map>
+                <entry key="en" value="EN-US"/>
+                <entry key="pt" value="PT-BR"/>
+            </map>
+        </property>
+    </bean>
     <service interface="org.jahia.bin.Action">
         <bean class="org.jahia.community.translation.deepl.actions.RequestTranslationAction">
             <property name="name" value="requestTranslationAction"/>
