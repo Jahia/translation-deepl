@@ -23,22 +23,25 @@ import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.settings.SettingsBean;
 import org.jahia.utils.LanguageCodeConverters;
 import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = {ManagedService.class}, property = "service.pid=org.jahia.community.translationdeepl", immediate = true)
-public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, ManagedService {
+public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeepLTranslatorServiceImpl.class);
-    private String authKey;
+    private final String authKey;
+    private Map<String, String> targetLanguages;
+
+    public DeepLTranslatorServiceImpl() {
+        authKey = SettingsBean.getInstance().getPropertyValue("translation.deepl.api.key");
+    }
 
     @Override
     public void translate(String path, String srcLanguage, String destLanguage) {
         try {
             final Locale srcLocale = LanguageCodeConverters.getLocaleFromCode(srcLanguage);
-            final Locale destLocale = LanguageCodeConverters.getLocaleFromCode(destLanguage);
+            final String destDeepLLanguage = targetLanguages.containsKey(destLanguage) ? targetLanguages.get(destLanguage) : destLanguage;
+            final Locale destLocale = LanguageCodeConverters.getLocaleFromCode(destDeepLLanguage);
 
             if (srcLocale != null && destLocale != null) {
 
@@ -67,7 +70,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
 
                 final Translator translator = new Translator(authKey, options);
                 for (Map.Entry<String, String> entry : translations.entrySet()) {
-                    entry.setValue(translator.translateText(entry.getValue(), srcLanguage, destLanguage).getText());
+                    entry.setValue(translator.translateText(entry.getValue(), srcLanguage, destDeepLLanguage).getText());
                 }
 
                 final boolean result = JCRTemplate.getInstance().doExecuteWithSystemSessionAsUser(null, Constants.EDIT_WORKSPACE, destLocale, (JCRSessionWrapper session) -> {
@@ -80,7 +83,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
                 });
 
                 if (result && LOGGER.isInfoEnabled()) {
-                    LOGGER.info(String.format("Translation from %s to %s done for %s", srcLanguage, destLanguage, path));
+                    LOGGER.info(String.format("Translation from %s to %s done for %s", srcLanguage, destDeepLLanguage, path));
                 }
             }
         } catch (InterruptedException ex) {
@@ -91,14 +94,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
         }
     }
 
-    @Override
-    public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
-        if(dictionary != null)
-            authKey = (String) dictionary.get("translation.deepl.api.key");
-        if(!(authKey != null && !authKey.trim().isEmpty()))
-            authKey = SettingsBean.getInstance().getPropertyValue("translation.deepl.api.key");
-        if(!(authKey != null && !authKey.trim().isEmpty()))
-            LOGGER.error("translation.deepl.api.key not defined");
-        LOGGER.debug("translation.deepl.api.key = {}",authKey);
+    public void setTargetLanguages(Map<String, String> targetLanguages) {
+        this.targetLanguages = targetLanguages;
     }
 }
