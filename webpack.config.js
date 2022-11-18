@@ -80,8 +80,8 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: "copyToOtherLanguages",
-                library: { type: "assign", name: "appShell.remotes.copyToOtherLanguages" },
+                name: "translationDeepl",
+                library: { type: "assign", name: "appShell.remotes.translationDeepl" },
                 filename: "remoteEntry.js",
                 exposes: {
                     './init': './src/javascript/init'
