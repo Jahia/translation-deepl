@@ -17,11 +17,25 @@ import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
 import org.json.JSONObject;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+@Component(service = Action.class, immediate = true)
 public class RequestTranslationAction extends Action {
+
+    @Activate
+    public void activate() {
+        setName("requestTranslationAction");
+        setRequireAuthenticatedUser(true);
+        setRequiredPermission("jcr:write_default");
+        setRequiredWorkspace("default");
+        setRequiredMethods("GET,POST");
+    }
 
     private DeepLTranslatorService deepLTranslatorService;
 
+    @Reference(service = DeepLTranslatorService.class)
     public void setDeepLTranslatorService(DeepLTranslatorService deepLTranslatorService) {
         this.deepLTranslatorService = deepLTranslatorService;
     }
@@ -36,16 +50,16 @@ public class RequestTranslationAction extends Action {
         int resultCode = HttpServletResponse.SC_BAD_REQUEST;
 
         boolean allLanguages = false;
-        if (parameters.containsKey(DeeplConstants.PROP_ALL_LANGUAGES) && parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).size() > 0) {
+        if (parameters.containsKey(DeeplConstants.PROP_ALL_LANGUAGES) && !parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).isEmpty()) {
             allLanguages = Boolean.valueOf(parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).get(0));
         }
         boolean subTree = false;
-        if (parameters.containsKey(DeeplConstants.PROP_SUB_TREE) && parameters.get(DeeplConstants.PROP_SUB_TREE).size() > 0) {
+        if (parameters.containsKey(DeeplConstants.PROP_SUB_TREE) && !parameters.get(DeeplConstants.PROP_SUB_TREE).isEmpty()) {
             subTree = Boolean.valueOf(parameters.get(DeeplConstants.PROP_SUB_TREE).get(0));
         }
 
         String destLanguage = "";
-        if (parameters.containsKey(DeeplConstants.PROP_DEST_LANGUAGE) && parameters.get(DeeplConstants.PROP_DEST_LANGUAGE).size() > 0) {
+        if (parameters.containsKey(DeeplConstants.PROP_DEST_LANGUAGE) && !parameters.get(DeeplConstants.PROP_DEST_LANGUAGE).isEmpty()) {
             destLanguage = parameters.get(DeeplConstants.PROP_DEST_LANGUAGE).get(0);
         }
 
