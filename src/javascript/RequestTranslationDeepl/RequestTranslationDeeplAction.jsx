@@ -10,7 +10,7 @@ export const RequestTranslationDeeplAction = ({path, render: Render, ...otherPro
     const {siteInfo, loading} = useSiteInfo({siteKey: site, displayLanguage: language});
     const {node, nodeLoading: nodeLoading} = useNodeInfo({path: path, language: language}, {getDisplayName: true});
 
-    if (loading || !siteInfo) {
+    if (loading || !siteInfo || nodeLoading || !node) {
         return null;
     }
 
