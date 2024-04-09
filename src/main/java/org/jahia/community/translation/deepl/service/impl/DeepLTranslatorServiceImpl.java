@@ -31,7 +31,7 @@ import static org.jahia.community.translation.deepl.DeeplConstants.PROP_TARGET_L
 @Component(service = {DeepLTranslatorService.class, ManagedService.class}, property = "service.pid=org.jahia.community.translationdeepl", immediate = true)
 public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, ManagedService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeepLTranslatorServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeepLTranslatorServiceImpl.class);
     private String authKey;
     private Map<String, String> targetLanguages;
 
@@ -39,7 +39,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
     public void translate(String path, String srcLanguage, String destLanguage) {
         try {
             final Locale srcLocale = LanguageCodeConverters.getLocaleFromCode(srcLanguage);
-            final String destDeepLLanguage = targetLanguages.containsKey(destLanguage) ? targetLanguages.get(destLanguage) : destLanguage;
+            final String destDeepLLanguage = targetLanguages.getOrDefault(destLanguage, destLanguage);
             final Locale destLocale = LanguageCodeConverters.getLocaleFromCode(destDeepLLanguage);
 
             if (srcLocale != null && destLocale != null) {
@@ -81,15 +81,15 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
                     return true;
                 });
 
-                if (result && LOGGER.isInfoEnabled()) {
-                    LOGGER.info(String.format("Translation from %s to %s done for %s", srcLanguage, destDeepLLanguage, path));
+                if (result && logger.isInfoEnabled()) {
+                    logger.info(String.format("Translation from %s to %s done for %s", srcLanguage, destDeepLLanguage, path));
                 }
             }
         } catch (InterruptedException ex) {
-            LOGGER.error("InterruptedException: ", ex);
+            logger.error("InterruptedException: ", ex);
             Thread.currentThread().interrupt();
         } catch (DeepLException | RepositoryException ex) {
-            LOGGER.error("Impossible to translate content", ex);
+            logger.error("Impossible to translate content", ex);
         }
     }
 
@@ -106,8 +106,8 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
             }
         }
         if (!(authKey != null && !authKey.trim().isEmpty()))
-            LOGGER.error("translation.deepl.api.key not defined. Please add it to org.jahia.community.translationdeepl.cfg");
-        LOGGER.debug("translation.deepl.api.key = {}", authKey);
+            logger.error("translation.deepl.api.key not defined. Please add it to org.jahia.community.translationdeepl.cfg");
+        logger.debug("translation.deepl.api.key = {}", authKey);
     }
 
 }

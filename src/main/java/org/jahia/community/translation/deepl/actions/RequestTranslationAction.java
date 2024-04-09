@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.jahia.api.Constants;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
 import org.jahia.community.translation.deepl.DeeplConstants;
@@ -29,7 +31,7 @@ public class RequestTranslationAction extends Action {
         setName("requestTranslationAction");
         setRequireAuthenticatedUser(true);
         setRequiredPermission("jcr:write_default");
-        setRequiredWorkspace("default");
+        setRequiredWorkspace(Constants.EDIT_WORKSPACE);
         setRequiredMethods("GET,POST");
     }
 
@@ -72,7 +74,6 @@ public class RequestTranslationAction extends Action {
     }
 
     private int translate(List<Locale> locales, JCRNodeWrapper node, String currentLanguage, boolean allLanguages, boolean subTree, String destLanguage) throws RepositoryException {
-        int resultCode = HttpServletResponse.SC_BAD_REQUEST;
         if (allLanguages) {
             for (Locale locale : locales) {
                 final String language = locale.getLanguage();
@@ -87,7 +88,6 @@ public class RequestTranslationAction extends Action {
                     translate(locales, childNode, currentLanguage, allLanguages, subTree, destLanguage);
                 }
             }
-            resultCode = HttpServletResponse.SC_OK;
         } else {
             deepLTranslatorService.translate(node.getPath(), currentLanguage, destLanguage);
             if (subTree) {
@@ -97,9 +97,8 @@ public class RequestTranslationAction extends Action {
                     translate(locales, childNode, currentLanguage, allLanguages, subTree, destLanguage);
                 }
             }
-            resultCode = HttpServletResponse.SC_OK;
         }
-        return resultCode;
+        return HttpServletResponse.SC_OK;
     }
 
 }
