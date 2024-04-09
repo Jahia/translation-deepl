@@ -22,7 +22,6 @@
 
     <properties>
         <jahia-depends>default,content-editor=4.0.0</jahia-depends>
-        <jahia.plugin.version>6.0</jahia.plugin.version>
         <yarn.arguments>build:production</yarn.arguments>
     </properties>
 
