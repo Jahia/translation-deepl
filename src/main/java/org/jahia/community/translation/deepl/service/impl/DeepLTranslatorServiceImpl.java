@@ -3,16 +3,6 @@ package org.jahia.community.translation.deepl.service.impl;
 import com.deepl.api.DeepLException;
 import com.deepl.api.Translator;
 import com.deepl.api.TranslatorOptions;
-
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
-import java.time.Duration;
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
@@ -27,6 +17,17 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.RepositoryException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 import static org.jahia.community.translation.deepl.DeeplConstants.PROP_API_KEY;
 import static org.jahia.community.translation.deepl.DeeplConstants.PROP_PREFIX_TARGET_LANGUAGES;

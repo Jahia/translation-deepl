@@ -1,12 +1,5 @@
 package org.jahia.community.translation.deepl.actions;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jahia.api.Constants;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
@@ -22,6 +15,13 @@ import org.json.JSONObject;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component(service = Action.class)
 public class RequestTranslationAction extends Action {
@@ -41,7 +41,6 @@ public class RequestTranslationAction extends Action {
     @Override
     public ActionResult doExecute(final HttpServletRequest request, final RenderContext renderContext, final Resource resource, final JCRSessionWrapper session, Map<String, List<String>> parameters, final URLResolver urlResolver) throws Exception {
         final JSONObject resp = new JSONObject();
-        int resultCode = HttpServletResponse.SC_BAD_REQUEST;
 
         boolean allLanguages = false;
         if (parameters.containsKey(DeeplConstants.PROP_ALL_LANGUAGES) && !parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).isEmpty()) {
@@ -60,7 +59,7 @@ public class RequestTranslationAction extends Action {
         final List<Locale> locales = renderContext.getSite().getLanguagesAsLocales();
         final String currentLanguage = resource.getLocale().getLanguage();
 
-        resultCode = translate(locales, resource.getNode(), currentLanguage, allLanguages, subTree, destLanguage);
+        final int resultCode = translate(locales, resource.getNode(), currentLanguage, allLanguages, subTree, destLanguage);
 
         return new ActionResult(resultCode, null, resp);
     }
