@@ -9,8 +9,11 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -20,20 +23,23 @@ import org.jahia.services.content.JCRTemplate;
 import org.jahia.services.content.LazyPropertyIterator;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.utils.LanguageCodeConverters;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jahia.community.translation.deepl.DeeplConstants.PROP_TARGET_LANGUAGES;
+import static org.jahia.community.translation.deepl.DeeplConstants.PROP_API_KEY;
+import static org.jahia.community.translation.deepl.DeeplConstants.PROP_PREFIX_TARGET_LANGUAGES;
+import static org.jahia.community.translation.deepl.DeeplConstants.SERVICE_CONFIG_FILE_FULLNAME;
+import static org.jahia.community.translation.deepl.DeeplConstants.SERVICE_CONFIG_FILE_NAME;
 
-@Component(service = {DeepLTranslatorService.class, ManagedService.class}, property = "service.pid=org.jahia.community.translationdeepl", immediate = true)
-public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, ManagedService {
+@Component(service = DeepLTranslatorService.class, configurationPid = SERVICE_CONFIG_FILE_NAME)
+public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeepLTranslatorServiceImpl.class);
+
     private String authKey;
-    private Map<String, String> targetLanguages;
+    private Map<String, String> targetLanguages = new HashMap<>();
 
     @Override
     public void translate(String path, String srcLanguage, String destLanguage) {
@@ -93,21 +99,27 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService, Manag
         }
     }
 
-    @Override
-    public void updated(Dictionary<String, ?> dictionary) throws ConfigurationException {
-        if (targetLanguages == null) targetLanguages = new HashMap<>();
-        if (dictionary != null) {
-            authKey = (String) dictionary.get("translation.deepl.api.key");
-            for (Enumeration<String> keys = dictionary.keys(); keys.hasMoreElements(); ) {
-                String key = keys.nextElement();
-                if (key.startsWith(PROP_TARGET_LANGUAGES)) {
-                    targetLanguages.put(key.substring(PROP_TARGET_LANGUAGES.length()), (String) dictionary.get(key));
-                }
-            }
+    @Activate
+    public void activate(Map<String, ?> properties) {
+        targetLanguages.clear();
+        if (properties == null) {
+            logger.warn("Missing configurations");
+            return;
         }
-        if (!(authKey != null && !authKey.trim().isEmpty()))
-            logger.error("translation.deepl.api.key not defined. Please add it to org.jahia.community.translationdeepl.cfg");
-        logger.debug("translation.deepl.api.key = {}", authKey);
+
+        authKey = (String) properties.getOrDefault(PROP_API_KEY, null);
+        properties.entrySet().stream()
+                .filter(e -> e.getKey().startsWith(PROP_PREFIX_TARGET_LANGUAGES))
+                .collect(Collectors.toMap(e -> e.getKey().substring(PROP_PREFIX_TARGET_LANGUAGES.length()), e -> (String) (e.getValue()), throwingMerger(), () -> targetLanguages));
+        if (StringUtils.isBlank(authKey))
+            logger.error("translation.deepl.api.key not defined. Please add it to {}", SERVICE_CONFIG_FILE_FULLNAME);
+        logger.debug("{} = {}", PROP_API_KEY, authKey);
+    }
+
+    private static <T> BinaryOperator<T> throwingMerger() {
+        return (u, v) -> {
+            throw new IllegalStateException(String.format("Duplicate key %s", u));
+        };
     }
 
 }

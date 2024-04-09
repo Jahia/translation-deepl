@@ -23,7 +23,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(service = Action.class, immediate = true)
+@Component(service = Action.class)
 public class RequestTranslationAction extends Action {
 
     @Activate
@@ -35,16 +35,8 @@ public class RequestTranslationAction extends Action {
         setRequiredMethods("GET,POST");
     }
 
+    @Reference
     private DeepLTranslatorService deepLTranslatorService;
-
-    @Reference(service = DeepLTranslatorService.class)
-    public void setDeepLTranslatorService(DeepLTranslatorService deepLTranslatorService) {
-        this.deepLTranslatorService = deepLTranslatorService;
-    }
-
-    public DeepLTranslatorService getDeepLTranslatorService() {
-        return deepLTranslatorService;
-    }
 
     @Override
     public ActionResult doExecute(final HttpServletRequest request, final RenderContext renderContext, final Resource resource, final JCRSessionWrapper session, Map<String, List<String>> parameters, final URLResolver urlResolver) throws Exception {
