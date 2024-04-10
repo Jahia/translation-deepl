@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -214,6 +215,10 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
             return false;
         }
 
-        return definition.isInternationalized() && !definition.isMultiple();
+        return definition.isInternationalized()
+                && !definition.isMultiple()
+                && definition.getRequiredType() == PropertyType.STRING
+                && !definition.isHidden()
+                && !definition.isProtected();
     }
 }
