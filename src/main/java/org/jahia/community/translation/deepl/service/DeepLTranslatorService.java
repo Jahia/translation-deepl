@@ -1,6 +1,10 @@
 package org.jahia.community.translation.deepl.service;
 
+import org.jahia.services.content.JCRNodeWrapper;
+
+import javax.jcr.RepositoryException;
+
 public interface DeepLTranslatorService {
 
-    public void translate(String path, String srcLanguage, String destLanguage);
+    void translate(JCRNodeWrapper node, boolean translateSubtree, String targetLanguage, boolean allLanguages) throws RepositoryException;
 }
