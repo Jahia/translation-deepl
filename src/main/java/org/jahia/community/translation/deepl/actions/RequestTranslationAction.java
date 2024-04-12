@@ -34,7 +34,7 @@ public class RequestTranslationAction extends Action {
     public void activate() {
         setName("requestTranslationAction");
         setRequireAuthenticatedUser(true);
-        setRequiredPermission("jcr:write_default");
+        setRequiredPermission("jcr:write_default+" + DeeplConstants.TRANSLATE_PERMISSION);
         setRequiredWorkspace(Constants.EDIT_WORKSPACE);
         setRequiredMethods("GET,POST");
     }

@@ -1,0 +1,5 @@
+<permissions xmlns:jcr="http://www.jcp.org/jcr/1.0">
+    <actions jcr:primaryType="jnt:permission">
+        <deeplTranslate jcr:primaryType="jnt:permission" />
+    </actions>
+</permissions>
