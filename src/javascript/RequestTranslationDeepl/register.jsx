@@ -22,7 +22,7 @@ export default function () {
         isMenuPreload: true
     });
 
-    registry.add('action', 'translation-deepl-requestTranslation ', {
+    registry.add('action', 'translation-deepl-requestTranslation', {
         targets: ['translationMenu:1'],
         showOnNodeTypes: ['jnt:page', 'jnt:content'],
         subTree: false,
@@ -39,7 +39,7 @@ export default function () {
         component: RequestTranslationDeeplAction
     });
 
-    registry.add('action', 'translation-deepl-requestTranslationTree ', {
+    registry.add('action', 'translation-deepl-requestTranslationTree', {
         targets: ['translationMenu:3'],
         showOnNodeTypes: ['jnt:page', 'jnt:content'],
         subTree: true,
