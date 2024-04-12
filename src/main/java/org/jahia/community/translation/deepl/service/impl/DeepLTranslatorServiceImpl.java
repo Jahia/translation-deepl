@@ -130,7 +130,9 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
             if (!isTranslatableProperty(property)) continue;
             try {
                 final String key = node.getPath() + SLASH + property.getName();
-                texts.put(key, property.getValue().getString());
+                final String stringValue = StringUtils.trimToNull(property.getValue().getString());
+                if (stringValue == null) continue;
+                texts.put(key, stringValue);
             } catch (RepositoryException e) {
                 logger.error("", e);
             }
