@@ -92,8 +92,8 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     @Override
     public void translate(JCRNodeWrapper node, boolean translateSubtree, String targetLanguage, boolean allLanguages) throws RepositoryException {
-        final Map<String, String> texts = new HashMap<>();
-        scanTexts(node, translateSubtree, texts);
+        final TranslationData data = new TranslationData();
+        scanTexts(node, translateSubtree, data);
 
         final JCRSessionWrapper session = node.getSession();
         final Locale srcLocale = session.getLocale();
@@ -101,21 +101,21 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         if (allLanguages) {
             node.getResolveSite().getLanguages().stream()
                     .filter(language -> !StringUtils.equals(language, srcLanguage))
-                    .forEach(lang -> translateAndSave(texts, srcLanguage, lang, session.getUser()));
+                    .forEach(lang -> translateAndSave(data, srcLanguage, lang, session.getUser()));
         } else {
-            translateAndSave(texts, srcLanguage, targetLanguage, session.getUser());
+            translateAndSave(data, srcLanguage, targetLanguage, session.getUser());
         }
     }
 
-    private void scanTexts(JCRNodeWrapper node, boolean translateSubtree, Map<String, String> texts) {
-        analyzeNode(node, texts);
+    private void scanTexts(JCRNodeWrapper node, boolean translateSubtree, TranslationData data) {
+        analyzeNode(node, data);
         if (translateSubtree) {
             JCRContentUtils.getChildrenOfType(node, SUBTREE_ITERABLE_TYPES)
-                    .forEach(child -> scanTexts(child, true, texts));
+                    .forEach(child -> scanTexts(child, true, data));
         }
     }
 
-    private void analyzeNode(JCRNodeWrapper node, Map<String, String> texts) {
+    private void analyzeNode(JCRNodeWrapper node, TranslationData data) {
         if (!isTranslatableNode(node)) return;
 
         final PropertyIterator properties;
@@ -132,15 +132,15 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
                 final String key = node.getPath() + SLASH + property.getName();
                 final String stringValue = StringUtils.trimToNull(property.getValue().getString());
                 if (stringValue == null) continue;
-                texts.put(key, stringValue);
+                data.trackText(key, stringValue);
             } catch (RepositoryException e) {
                 logger.error("", e);
             }
         }
     }
 
-    private void translateAndSave(Map<String, String> texts, String srcLanguage, String targetLanguage, JahiaUser user) {
-        final Map<String, String> translations = generateTranslations(texts, srcLanguage, targetLanguage);
+    private void translateAndSave(TranslationData data, String srcLanguage, String targetLanguage, JahiaUser user) {
+        final Map<String, String> translations = generateTranslations(data, srcLanguage, targetLanguage);
 
         if (MapUtils.isEmpty(translations)) return;
 
@@ -151,15 +151,16 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         }
     }
 
-    private Map<String, String> generateTranslations(Map<String, String> texts, String srcLanguage, String destLanguage) {
+    private Map<String, String> generateTranslations(TranslationData data, String srcLanguage, String destLanguage) {
         if (translator == null) {
             return null;
         }
-        if (MapUtils.isEmpty(texts)) {
+        if (!data.hasTextToTranslate()) {
             return null;
         }
 
         final String destDeepLLanguage = targetLanguages.getOrDefault(destLanguage, destLanguage);
+        final Map<String, String> texts = data.getTexts();
         final int nbTexts = texts.size();
         final List<String> keys = new ArrayList<>(nbTexts);
         final List<String> srcTexts = new ArrayList<>(nbTexts);
@@ -175,9 +176,10 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
             return null;
         }
 
-        return IntStream.range(0, nbTexts)
+        final Map<String, String> translations = IntStream.range(0, nbTexts)
                 .boxed()
                 .collect(Collectors.toMap(keys::get, i -> results.get(i).getText()));
+        return data.completeTranslations(translations);
     }
 
     private static Object saveTranslations(JCRSessionWrapper session, Map<String, String> translations) {
