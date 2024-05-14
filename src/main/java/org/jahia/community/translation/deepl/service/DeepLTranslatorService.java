@@ -6,5 +6,5 @@ import javax.jcr.RepositoryException;
 
 public interface DeepLTranslatorService {
 
-    void translate(JCRNodeWrapper node, boolean translateSubtree, String targetLanguage, boolean allLanguages) throws RepositoryException;
+    DeepLTranslationResponse translate(JCRNodeWrapper node, boolean translateSubtree, String sourceLanguage, String targetLanguage, boolean allLanguages) throws RepositoryException;
 }
