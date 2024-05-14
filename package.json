@@ -37,7 +37,7 @@
     },
     "dependencies": {
         "@apollo/react-hooks": "^3",
-        "@jahia/data-helper": "^1.1.6",
+        "@jahia/data-helper": "1.1.6",
         "@jahia/moonstone": "^2.0.1",
         "@jahia/ui-extender": "^1.0.3",
         "@material-ui/core": "^3.9.3",
