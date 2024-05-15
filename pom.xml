@@ -24,6 +24,7 @@
         <jahia-depends>default,content-editor=4.0.0</jahia-depends>
         <jahia.plugin.version>6.9</jahia.plugin.version>
         <yarn.arguments>build:production</yarn.arguments>
+        <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
     </properties>
 
     <dependencies>

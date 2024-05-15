@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="Toolbar.Item.PagesTab.DeepLMenu" class="org.jahia.services.uicomponents.bean.toolbar.Menu">
+        <property name="id" value="deepl-menu" />
+        <property name="title" value="DeepL"/>
+        <property name="icon" value="translate"/>
+    </bean>
+
+    <bean id="contextMenu.deeplTranslateItem" class="org.jahia.services.uicomponents.bean.toolbar.Item" scope="prototype">
+        <property name="actionItem">
+            <bean class="org.jahia.ajax.gwt.client.widget.toolbar.action.ExecuteActionItem">
+                <property name="action" value="requestTranslationAction"/>
+            </bean>
+        </property>
+        <!--property name="titleKey" value="label.translate@resources.translation-deepl"/-->
+        <property name="icon" value="translate"/>
+    </bean>
+
+    <bean class="org.jahia.community.translation.deepl.spring.SpringConfigExtender" />
+</beans>

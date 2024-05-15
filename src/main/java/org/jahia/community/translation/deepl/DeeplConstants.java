@@ -11,6 +11,7 @@ public class DeeplConstants {
 
     public static final String SUBTREE_ITERABLE_TYPES = Constants.JAHIANT_PAGE + "," + Constants.JAHIANT_CONTENT;
     public static final String PROP_ALL_LANGUAGES = "allLanguages";
+    public static final String PROP_SRC_LANGUAGE = "srcLanguage";
     public static final String PROP_DEST_LANGUAGE = "destLanguage";
     public static final String PROP_SUB_TREE = "subTree";
 
