@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class SpringConfigExtender implements JahiaAfterInitializationService, Di
                                         .map(targetLang -> {
                                             final Item item = getBean("contextMenu.deeplTranslateItem", Item.class);
                                             item.setId("deeplButton-" + srcLang + "-" + targetLang);
-                                            item.setTitle(srcLang + " -> " + targetLang);
+                                            item.setTitle(getLanguageLabel(srcLang) + " -> " + getLanguageLabel(targetLang));
                                             item.setVisibility(new DeepLVisibility(srcLang, targetLang));
                                             final ExecuteActionItem actionItem = (ExecuteActionItem) item.getActionItem();
                                             final Map<String, String> parameters = new HashMap<>();
@@ -104,6 +105,11 @@ public class SpringConfigExtender implements JahiaAfterInitializationService, Di
             logger.error("", e);
             return Collections.emptyList();
         }
+    }
+
+    private String getLanguageLabel(String lang) {
+        final Locale locale = new Locale(lang);
+        return locale.getDisplayLanguage(locale);
     }
 
     private <C> C getBean(String beanID, Class C) {
