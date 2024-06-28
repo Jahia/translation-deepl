@@ -9,12 +9,15 @@ import org.jahia.bin.ActionResult;
 import org.jahia.community.translation.deepl.DeeplConstants;
 import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
 import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
+import org.jahia.osgi.BundleUtils;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
 import org.jahia.utils.LanguageCodeConverters;
+import org.jahia.utils.i18n.Messages;
 import org.json.JSONObject;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -26,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -59,11 +63,13 @@ public class RequestTranslationAction extends Action {
             return ActionResult.BAD_REQUEST;
         }
 
-        final DeepLTranslationResponse response = deepLTranslatorService.translate(resource.getNode(), subTree, sourceLanguage, targetLanguage, allLanguages);
+        final Locale currentLocale = new Locale(currentBrowsedLanguage);
+        final DeepLTranslationResponse response = deepLTranslatorService.translate(resource.getNode(), subTree, sourceLanguage, targetLanguage, allLanguages, currentLocale);
+        final String resourceBundle = BundleUtils.getModule(FrameworkUtil.getBundle(this.getClass())).getResourceBundleName();
         final JSONObject jsonObject = new JSONObject();
         final Map<String, String> message = new HashMap<>();
-        message.put("title", "TITLE (DeepL action)");
-        message.put("text", String.format("TEXT (DeepL action) , successful=%s , %s", response.isSuccessful(), response.getMessage()));
+        message.put("title", Messages.getNonEmpty(resourceBundle, "translation.response.title", currentLocale));
+        message.put("text", response.getMessage());
         message.put("messageBoxType", response.isSuccessful() ? "info" : "alert");
         jsonObject.put("messageDisplay", message);
         if (response.isSuccessful() && StringUtils.equals(targetLanguage, currentBrowsedLanguage))
