@@ -37,8 +37,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -54,6 +56,15 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
     private static final Logger logger = LoggerFactory.getLogger(DeepLTranslatorServiceImpl.class);
     private static final String SLASH = "/";
     private static final String MISSING_RESOURCE = "???";
+    private static final Predicate<JCRNodeWrapper> PAGE_NODES_EXCLUSION_PREDICATE = node -> {
+        try {
+            return !node.isNodeType(Constants.JAHIANT_PAGE);
+        } catch (RepositoryException e) {
+            logger.error("", e);
+            return false;
+        }
+    };
+    private static final Predicate<JCRNodeWrapper> ALL_NODES_PREDICATE = node -> Boolean.TRUE;
 
     private Translator translator;
     private final Map<String, String> targetLanguages = new HashMap<>();
@@ -126,7 +137,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         }
 
         final TranslationData data = new TranslationData();
-        scanTexts(node, translateSubtree, data);
+        scanTexts(node, translateSubtree, PAGE_NODES_EXCLUSION_PREDICATE, data);
 
         if (allLanguages) {
             return siteLanguages.stream()
@@ -138,11 +149,13 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         }
     }
 
-    private void scanTexts(JCRNodeWrapper node, boolean translateSubtree, TranslationData data) {
+    private void scanTexts(JCRNodeWrapper node, boolean translateSubtree, Predicate<JCRNodeWrapper> filter, TranslationData data) {
         analyzeNode(node, data);
         if (translateSubtree) {
             JCRContentUtils.getChildrenOfType(node, SUBTREE_ITERABLE_TYPES)
-                    .forEach(child -> scanTexts(child, true, data));
+                    .stream()
+                    .filter(Optional.ofNullable(filter).orElse(ALL_NODES_PREDICATE))
+                    .forEach(child -> scanTexts(child, true, filter, data));
         }
     }
 
