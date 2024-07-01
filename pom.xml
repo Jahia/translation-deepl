@@ -10,7 +10,7 @@
     <groupId>org.jahia.community</groupId>
     <artifactId>translation-deepl</artifactId>
     <name>Translation - DeepL</name>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>Module to allow you asking translation to DeepL from jContent.</description>
     <scm>
