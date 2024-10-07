@@ -2,6 +2,7 @@ package org.jahia.community.translation.deepl.service.impl;
 
 import com.deepl.api.DeepLException;
 import com.deepl.api.TextResult;
+import com.deepl.api.TextTranslationOptions;
 import com.deepl.api.Translator;
 import com.deepl.api.TranslatorOptions;
 import org.apache.commons.collections.MapUtils;
@@ -204,7 +205,9 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         });
         final List<TextResult> results;
         try {
-            results = translator.translateText(srcTexts, srcLanguage, destDeepLLanguage);
+            TextTranslationOptions textTranslationOptions = new TextTranslationOptions();
+            textTranslationOptions.setTagHandling("html");
+            results = translator.translateText(srcTexts, srcLanguage, destDeepLLanguage, textTranslationOptions);
         } catch (DeepLException | InterruptedException e) {
             logger.error("Failed to translate content", e);
             return null;
