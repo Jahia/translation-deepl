@@ -1,0 +1,23 @@
+{
+    "label": {
+        "requestTranslation": "Traduire <em>{{displayName}}</em> - {{languageDisplay}}",
+        "requestTranslationFrom": "DeepL Traduction de",
+        "requestTranslationTree": "Traduire tout sous <em>{{displayName}}</em> - {{languageDisplay}}",
+        "requestTranslationForAllLanguages": "Traduire <em>{{displayName}}</em> dans toutes les langues",
+        "requestTranslationTreeForAllLanguages": "Traduire tout sous <em>{{displayName}}</em> dans toutes les langues",
+        "menu": "DeepL",
+        "dialog": {
+            "translationFrom": {
+                "dialogTitle": " Traduction à partir de",
+                "bottomText": "En cliquant sur \"APPLIQUER\", vous allez écraser tous les champs avec la langue nouvellement choisie.",
+                "btnApply": "Appliquer",
+                "btnCancel": "Annuler",
+                "currentLanguage": "à langue courante",
+                "defaultValue": "Non sélectionné",
+                "dialogSubTitle": "\"Traduire de\" vous permet de traduire TOUS les champs de contenu d'une autre langue vers la langue actuelle.",
+                "listLabel": "Traduire de",
+                "name": "Traduire à partir des langues"
+            }
+        }
+    }
+}
