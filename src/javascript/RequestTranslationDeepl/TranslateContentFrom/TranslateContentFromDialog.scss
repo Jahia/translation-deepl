@@ -1,0 +1,85 @@
+.dialogTitle {
+    margin: 0 10px;
+
+    color: #373c42;
+}
+
+.dialogSubTitle {
+    margin: 10px;
+
+    color: #525c65;
+}
+
+.dialogContent {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    padding: 40px 0 !important;
+
+    border-top: 1px solid #e0e6ea;
+    border-bottom: 1px solid #e0e6ea;
+
+    &.dialogContent_overflowYVisible {
+        overflow-y: visible;
+    }
+}
+
+.warningText {
+    flex-grow: 1;
+
+    color: #525c65;
+}
+
+.warningIcon {
+    color: #f6d62f;
+}
+
+.label {
+    padding: 0 10px;
+
+    font-weight: bold;
+}
+
+.copyFromLabel {
+    margin-left: 24px;
+    padding: 0 10px;
+
+    font-weight: bold;
+}
+
+.language {
+    margin-right: 16px;
+}
+
+div.dialog_overflowYVisible {
+    overflow-y: visible;
+}
+
+.dialogLogo {
+    margin-right: 8px; /* Adjust the margin as needed */
+    height: 39.6px;
+    width: 32px;
+}
+.dialogLogoText {
+    margin-right: 8px; /* Adjust the margin as needed */
+    display: inline-block;
+    height: 18px;
+    vertical-align: middle;
+    width: 66px;
+}
+.dialogTitleTextContainer {
+    display: flex;
+    flex-direction: column;
+}
+.dialogTitleContainer {
+    display: flex;
+    align-items: center;
+}
+.loaderOverlayWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+  }

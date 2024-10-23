@@ -1,19 +1,22 @@
 package org.jahia.community.translation.deepl.actions;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jahia.ajax.gwt.client.widget.Linker;
-import org.jahia.api.Constants;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
 import org.jahia.community.translation.deepl.DeeplConstants;
-import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
 import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
+import org.jahia.services.content.JCRNodeIteratorWrapper;
+import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
-import org.jahia.utils.LanguageCodeConverters;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,71 +24,102 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-@Component(service = Action.class)
+@Component(service = Action.class, immediate = true)
 public class RequestTranslationAction extends Action {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestTranslationAction.class);
-
-    @Reference
-    private DeepLTranslatorService deepLTranslatorService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestTranslationAction.class);
 
     @Activate
     public void activate() {
         setName("requestTranslationAction");
         setRequireAuthenticatedUser(true);
-        setRequiredPermission("jcr:write_default+" + DeeplConstants.TRANSLATE_PERMISSION);
-        setRequiredWorkspace(Constants.EDIT_WORKSPACE);
+        setRequiredPermission("jcr:write_default");
+        setRequiredWorkspace("default");
         setRequiredMethods("GET,POST");
+    }
+
+    private DeepLTranslatorService deepLTranslatorService;
+
+    @Reference(service = DeepLTranslatorService.class)
+    public void setDeepLTranslatorService(DeepLTranslatorService deepLTranslatorService) {
+        this.deepLTranslatorService = deepLTranslatorService;
+    }
+
+    public DeepLTranslatorService getDeepLTranslatorService() {
+        return deepLTranslatorService;
     }
 
     @Override
     public ActionResult doExecute(final HttpServletRequest request, final RenderContext renderContext, final Resource resource, final JCRSessionWrapper session, Map<String, List<String>> parameters, final URLResolver urlResolver) throws Exception {
-        final String currentBrowsedLanguage = LanguageCodeConverters.localeToLanguageTag(session.getLocale());
-        final boolean allLanguages = getBooleanParameter(DeeplConstants.PROP_ALL_LANGUAGES, parameters);
-        final boolean subTree = getBooleanParameter(DeeplConstants.PROP_SUB_TREE, parameters);
-        final String sourceLanguage = getStringParameter(DeeplConstants.PROP_SRC_LANGUAGE, parameters, currentBrowsedLanguage);
-        final String targetLanguage = getStringParameter(DeeplConstants.PROP_DEST_LANGUAGE, parameters);
+        JSONObject resp = new JSONObject();
+        int resultCode = HttpServletResponse.SC_BAD_REQUEST;
 
-        if (!allLanguages && StringUtils.isBlank(targetLanguage)) {
-            logger.error("No target language specified");
-            return ActionResult.BAD_REQUEST;
+        boolean allLanguages = false;
+        if (parameters.containsKey(DeeplConstants.PROP_ALL_LANGUAGES) && !parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).isEmpty()) {
+            allLanguages = Boolean.valueOf(parameters.get(DeeplConstants.PROP_ALL_LANGUAGES).get(0));
+        }
+        boolean subTree = false;
+        if (parameters.containsKey(DeeplConstants.PROP_SUB_TREE) && !parameters.get(DeeplConstants.PROP_SUB_TREE).isEmpty()) {
+            subTree = Boolean.valueOf(parameters.get(DeeplConstants.PROP_SUB_TREE).get(0));
         }
 
-        final DeepLTranslationResponse response = deepLTranslatorService.translate(resource.getNode(), subTree, sourceLanguage, targetLanguage, allLanguages);
-        final JSONObject jsonObject = new JSONObject();
-        final Map<String, String> message = new HashMap<>();
-        message.put("title", "TITLE (DeepL action)");
-        message.put("text", String.format("TEXT (DeepL action) , successful=%s , %s", response.isSuccessful(), response.getMessage()));
-        message.put("messageBoxType", response.isSuccessful() ? "info" : "alert");
-        jsonObject.put("messageDisplay", message);
-        if (response.isSuccessful() && StringUtils.equals(targetLanguage, currentBrowsedLanguage))
-            jsonObject.put("refreshData", Collections.singletonMap(Linker.REFRESH_MAIN, true));
-        return new ActionResult(HttpServletResponse.SC_OK, null, jsonObject);
+        String destLanguage = "";
+        if (parameters.containsKey(DeeplConstants.PROP_DEST_LANGUAGE) && !parameters.get(DeeplConstants.PROP_DEST_LANGUAGE).isEmpty()) {
+            destLanguage = parameters.get(DeeplConstants.PROP_DEST_LANGUAGE).get(0);
+        }
+
+        String currentLanguage = "";
+        if (parameters.containsKey(DeeplConstants.PROP_SRC_LANGUAGE) && !parameters.get(DeeplConstants.PROP_SRC_LANGUAGE).isEmpty()) {
+            currentLanguage = parameters.get(DeeplConstants.PROP_SRC_LANGUAGE).get(0);
+        } else {
+            currentLanguage = resource.getLocale().getLanguage();
+        }
+
+        boolean threeDotsMenu = false;
+        if (parameters.containsKey(DeeplConstants.PROP_3DOTSMENU) && !parameters.get(DeeplConstants.PROP_3DOTSMENU).isEmpty()) {
+            threeDotsMenu = Boolean.valueOf(parameters.get(DeeplConstants.PROP_3DOTSMENU).get(0));
+        }
+
+        final List<Locale> locales = renderContext.getSite().getLanguagesAsLocales();
+        
+        try {
+            resp = translate(locales, resource.getNode(), currentLanguage, allLanguages, subTree, destLanguage, threeDotsMenu);
+            if (resp != null) {
+                resultCode = HttpServletResponse.SC_OK;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Translation error: ", e);
+            resp.put("error", e.getMessage());
+        }
+
+        LOGGER.info(resp.toString());
+        return new ActionResult(resultCode, null, resp);
     }
 
-    private <R> R getParameter(String key, Map<String, List<String>> parameters, Function<String, R> parser, R defaultValue) {
-        final List<String> values = parameters.get(key);
-        if (CollectionUtils.isEmpty(values)) return defaultValue;
-        return parser.apply(values.get(0));
-    }
+    private JSONObject translate(List<Locale> locales, JCRNodeWrapper node, String currentLanguage, boolean allLanguages, boolean subTree, String destLanguage, boolean threeDotsMenu) throws RepositoryException, JSONException {
+        JSONObject resp = new JSONObject();
 
-    private boolean getBooleanParameter(String key, Map<String, List<String>> parameters) {
-        return getParameter(key, parameters, Boolean::parseBoolean, Boolean.FALSE);
-    }
+        if (allLanguages) {
+            for (Locale locale : locales) {
+                final String language = locale.getLanguage();
+                if (!currentLanguage.equals(language)) {
+                    resp.put(language, deepLTranslatorService.translate(node.getPath(), currentLanguage, language, threeDotsMenu));
+                }
+            }
+        } else {
+            resp.put("properties", deepLTranslatorService.translate(node.getPath(), currentLanguage, destLanguage, threeDotsMenu));
+        }
 
-    private String getStringParameter(String key, Map<String, List<String>> parameters) {
-        return getStringParameter(key, parameters, StringUtils.EMPTY);
-    }
+        if (subTree) {
+            final JCRNodeIteratorWrapper iterator = node.getNodes();
+            while (iterator.hasNext()) {
+                final JCRNodeWrapper childNode = (JCRNodeWrapper) iterator.next();
+                JSONObject childResp = translate(locales, childNode, currentLanguage, allLanguages, subTree, destLanguage, threeDotsMenu);
+                resp.put(childNode.getName(), childResp);
+            }
+        }
 
-    private String getStringParameter(String key, Map<String, List<String>> parameters, String defaultValue) {
-        return getParameter(key, parameters, s -> s, defaultValue);
+        resp.put("resultCode", HttpServletResponse.SC_OK);
+        return resp;
     }
 }
