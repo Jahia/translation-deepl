@@ -1,9 +1,23 @@
 {
     "label": {
         "requestTranslation": "Translate <em>{{displayName}}</em> - {{languageDisplay}}",
+        "requestTranslationFrom": "DeepL Translate From",
         "requestTranslationTree": "Translate all under <em>{{displayName}}</em> - {{languageDisplay}}",
         "requestTranslationForAllLanguages": "Translate <em>{{displayName}}</em> in all languages",
         "requestTranslationTreeForAllLanguages": "Translate all under <em>{{displayName}}</em> in all languages",
-        "menu": "DeepL"
+        "menu": "DeepL",
+        "dialog": {
+            "translationFrom":  {
+                "dialogTitle" :" Translation From",
+                "bottomText": "When clicking \"APPLY\" you will overwrite all fields with the newly chosen language.",
+                "btnApply": "Apply",
+                "btnCancel": "Cancel",
+                "currentLanguage": "To current language:",
+                "defaultValue": "Unselected",
+                "dialogSubTitle": "\"Translate from\" allows you to translate ALL content fields from another language into the current language.",
+                "listLabel": "Translate from",
+                "name": "Translate from languages"
+            }
+        }
     }
 }

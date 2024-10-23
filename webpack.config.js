@@ -3,8 +3,19 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const shared = require('./webpack.shared');
-const moonstone = require("@jahia/moonstone/dist/rulesconfig-wp");
+const {CycloneDxWebpackPlugin} = require('@cyclonedx/webpack-plugin');
+const getModuleFederationConfig = require('@jahia/webpack-config/getModuleFederationConfig');
+
+const packageJson = require('./package.json');
+const {ContextReplacementPlugin} = require("webpack");
+
+/** @type {import('@cyclonedx/webpack-plugin').CycloneDxWebpackPluginOptions} */
+const cycloneDxWebpackPluginOptions = {
+    specVersion: '1.4',
+    rootComponentType: 'library',
+    outputLocation: './bom',
+    validateResults: false
+};
 
 module.exports = (env, argv) => {
     let config = {
@@ -13,17 +24,37 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.resolve(__dirname, 'src/main/resources/javascript/apps/'),
-            filename: 'translation-deepl.bundle.js',
-            chunkFilename: '[name].jahia.[chunkhash:6].js'
+            filename: 'deepl-translation.bundle.js',
+            chunkFilename: '[name].deepl-translation.[chunkhash:6].js'
         },
         resolve: {
             mainFields: ['module', 'main'],
-            extensions: ['.mjs', '.js', '.jsx', 'json', '.scss'],
-            fallback: { "url": false }
+            extensions: ['.mjs', '.js', '.jsx', '.json', '.scss'],
+            alias: {
+                '~': path.resolve(__dirname, './src/javascript'),
+            },
+            fallback: {
+                "url": false,
+                "fs": false, // 'fs' is typically not available in the browser and might not have a browser-friendly package
+                "tls": false, // Similar to 'fs', 'tls' is node-specific and usually not required in a browser context
+                "net": false, // There's no direct browser equivalent for 'net', it's node-specific
+                "path": require.resolve("path-browserify"),
+                "zlib": require.resolve("browserify-zlib"),
+                "http": require.resolve("stream-http"),
+                "https": require.resolve("https-browserify"),
+                "stream": require.resolve("stream-browserify"),
+                "crypto": require.resolve("crypto-browserify"),
+                // For 'crypto-browserify', it seems like a redundancy since 'crypto' is already replaced with 'crypto-browserify'
+                "os": require.resolve("os-browserify/browser"),
+                "util": require.resolve("util/"),
+                "assert": require.resolve("assert/"),
+                "tty": require.resolve("tty-browserify"),
+                "vm": require.resolve("vm-browserify")
+            }
+
         },
         module: {
             rules: [
-                ...moonstone,
                 {
                     test: /\.m?js$/,
                     type: 'javascript/auto'
@@ -42,14 +73,18 @@ module.exports = (env, argv) => {
                                 '@babel/preset-react'
                             ],
                             plugins: [
+                                'lodash',
                                 '@babel/plugin-syntax-dynamic-import'
                             ]
                         }
                     }
                 },
                 {
+                    test: /\.css$/,
+                    use: ['style-loader', 'css-loader']
+                },
+                {
                     test: /\.scss$/i,
-                    include: [path.join(__dirname, 'src')],
                     sideEffects: true,
                     use: [
                         'style-loader',
@@ -67,6 +102,10 @@ module.exports = (env, argv) => {
                     ]
                 },
                 {
+                    test: /\.(png|svg)$/,
+                    use: ['file-loader']
+                },
+                {
                     test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
                     use: [{
                         loader: 'file-loader',
@@ -78,22 +117,22 @@ module.exports = (env, argv) => {
                 }
             ]
         },
+
         plugins: [
-            new ModuleFederationPlugin({
-                name: "translationDeepl",
-                library: { type: "assign", name: "appShell.remotes.translationDeepl" },
-                filename: "remoteEntry.js",
-                exposes: {
-                    './init': './src/javascript/init'
-                },
+            new ModuleFederationPlugin(getModuleFederationConfig(packageJson, {
                 remotes: {
                     '@jahia/app-shell': 'appShellRemote',
-                    '@jahia/content-editor': 'appShell.remotes.contentEditor'
-                },
-                shared
-            }),
+                    //'@jahia/jcontent':'appShell.remotes.jcontent'
+                    '@jahia/content-editor':'appShell.remotes.contentEditor'
+
+                }
+            })),
             new CleanWebpackPlugin({verbose: false}),
-            new CopyWebpackPlugin({patterns: [{from: './package.json', to: ''}]}),        ],
+            new CopyWebpackPlugin([{from: './package.json', to: ''}]),
+            new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions),
+            new ContextReplacementPlugin(/any-promise/)
+
+        ],
         mode: 'development'
     };
 
