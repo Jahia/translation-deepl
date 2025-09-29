@@ -9,7 +9,7 @@ export const RequestTranslationDeeplAction = ({path, render: Render, ...otherPro
     const {language, site} = useSelector(state => ({language: state.language, site: state.site}));
     const {siteInfo, loading} = useSiteInfo({siteKey: site, displayLanguage: language});
     const {node, nodeLoading: nodeLoading} = useNodeInfo({path: path, language: language}, {getDisplayName: true});
-    const {checksResult} = useNodeChecks({path}, {requiredPermission: 'deeplTranslate'})
+    const {checksResult} = useNodeChecks({path, language}, {requiredPermission: 'deeplTranslate'});
     const sharedProps = {"enabled": checksResult, ...otherProps}
 
     if (loading || !siteInfo || nodeLoading || !node) {
