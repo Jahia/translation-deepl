@@ -1,12 +1,11 @@
 package org.jahia.community.translation.deepl.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DeepLTranslationResponseImpl implements DeepLTranslationResponse {
 
@@ -37,7 +36,9 @@ public class DeepLTranslationResponseImpl implements DeepLTranslationResponse {
 
     @Override
     public void addMessage(String text) {
-        if (StringUtils.isNotBlank(text)) messages.add(text);
+        if (StringUtils.isNotBlank(text)) {
+            messages.add(text);
+        }
     }
 
     @Override

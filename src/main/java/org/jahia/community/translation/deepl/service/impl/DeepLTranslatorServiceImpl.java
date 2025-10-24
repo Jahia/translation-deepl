@@ -5,27 +5,6 @@ import com.deepl.api.TextResult;
 import com.deepl.api.TextTranslationOptions;
 import com.deepl.api.Translator;
 import com.deepl.api.TranslatorOptions;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jahia.api.Constants;
-import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
-import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
-import org.jahia.services.content.JCRContentUtils;
-import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRSessionFactory;
-import org.jahia.services.content.JCRSessionWrapper;
-import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
-import org.jahia.services.usermanager.JahiaUser;
-import org.jahia.utils.LanguageCodeConverters;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
@@ -39,12 +18,31 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jahia.api.Constants;
 import static org.jahia.community.translation.deepl.DeeplConstants.PROP_API_KEY;
 import static org.jahia.community.translation.deepl.DeeplConstants.PROP_PREFIX_TARGET_LANGUAGES;
 import static org.jahia.community.translation.deepl.DeeplConstants.SERVICE_CONFIG_FILE_FULLNAME;
 import static org.jahia.community.translation.deepl.DeeplConstants.SERVICE_CONFIG_FILE_NAME;
 import static org.jahia.community.translation.deepl.DeeplConstants.SUBTREE_ITERABLE_TYPES;
+import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
+import org.jahia.community.translation.deepl.service.DeepLTranslatorService;
+import org.jahia.services.content.JCRContentUtils;
+import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionFactory;
+import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
+import org.jahia.services.usermanager.JahiaUser;
+import org.jahia.utils.LanguageCodeConverters;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(service = DeepLTranslatorService.class, configurationPid = SERVICE_CONFIG_FILE_NAME)
 public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
@@ -60,14 +58,16 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         translator = null;
         targetLanguages.clear();
         if (properties == null) {
-            logger.error("Missing configurations: {}", SERVICE_CONFIG_FILE_FULLNAME);
+            logger.warn("Missing configurations: {}", SERVICE_CONFIG_FILE_FULLNAME);
             return;
         }
 
         final String authKey = (String) properties.getOrDefault(PROP_API_KEY, null);
-        logger.debug("{} = {}", PROP_API_KEY, authKey);
+        logger.debug("DeepL {} = {}", PROP_API_KEY, authKey);
         translator = initializeTranslator(authKey);
-        if (translator == null) return;
+        if (translator == null) {
+            return;
+        }
 
         properties.entrySet().stream()
                 .filter(e -> e.getKey().startsWith(PROP_PREFIX_TARGET_LANGUAGES))
@@ -77,7 +77,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     private Translator initializeTranslator(String authKey) {
         if (StringUtils.isBlank(authKey)) {
-            logger.error("{} not defined. Please add it to {}", PROP_API_KEY, SERVICE_CONFIG_FILE_FULLNAME);
+            logger.warn("{} not defined. Please add it to {}", PROP_API_KEY, SERVICE_CONFIG_FILE_FULLNAME);
             return null;
         }
 
@@ -102,18 +102,21 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         final Set<String> siteLanguages = pNode.getResolveSite().getLanguages();
         if (!allLanguages) {
             if (!siteLanguages.contains(targetLanguage)) {
+                logger.warn("DeepL: The language " + targetLanguage + " is not allowed on the site");
                 return new DeepLTranslationResponseImpl(false, "The language " + targetLanguage + " is not allowed on the site");
             } else if (StringUtils.equals(sourceLanguage, targetLanguage)) {
+                logger.warn("DeepL: The language " + targetLanguage + " is both the source and target language");
                 return new DeepLTranslationResponseImpl(false, "The language " + targetLanguage + " is both the source and target language");
             }
         }
-
+        
         final JCRNodeWrapper node;
         final JCRSessionWrapper session;
         if (!StringUtils.equals(sourceLanguage, pNodeSrcLanguage)) {
             session = JCRSessionFactory.getInstance().getCurrentUserSession(pNodeSession.getWorkspace().getName(), LanguageCodeConverters.languageCodeToLocale(sourceLanguage));
             final String path = pNode.getPath();
             if (!session.nodeExists(path)) {
+                logger.warn("DeepL: Impossible to translate from " + sourceLanguage + " since the node doesn't exist in this language");
                 return new DeepLTranslationResponseImpl(false, "Impossible to translate from " + sourceLanguage + " since the node doesn't exist in this language");
             }
             node = session.getNode(path);
@@ -121,7 +124,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
             node = pNode;
             session = pNodeSession;
         }
-
+        
         final TranslationData data = new TranslationData();
         scanTexts(node, translateSubtree, data);
 
@@ -144,7 +147,9 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
     }
 
     private void analyzeNode(JCRNodeWrapper node, TranslationData data) {
-        if (!isTranslatableNode(node)) return;
+        if (!isTranslatableNode(node)) {
+            return;
+        }
 
         final PropertyIterator properties;
         try {
@@ -155,11 +160,15 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
         }
         while (properties.hasNext()) {
             final Property property = properties.nextProperty();
-            if (!isTranslatableProperty(property)) continue;
+            if (!isTranslatableProperty(property)) {
+                continue;
+            }
             try {
                 final String key = node.getPath() + SLASH + property.getName();
                 final String stringValue = StringUtils.trimToNull(property.getValue().getString());
-                if (stringValue == null) continue;
+                if (stringValue == null) {
+                    continue;
+                }
                 data.trackText(key, stringValue);
             } catch (RepositoryException e) {
                 logger.error("", e);
@@ -170,14 +179,18 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
     private DeepLTranslationResponse translateAndSave(TranslationData data, String srcLanguage, String targetLanguage, JahiaUser user) {
         final Map<String, String> translations = generateTranslations(data, srcLanguage, targetLanguage);
 
-        if (MapUtils.isEmpty(translations))
+        if (MapUtils.isEmpty(translations)) {
+            logger.warn("Nothing to translate in " + targetLanguage);
             return new DeepLTranslationResponseImpl(false, "Nothing to translate in " + targetLanguage);
+        }
 
         try {
             final JCRSessionWrapper session = JCRSessionFactory.getInstance().getCurrentUserSession(Constants.EDIT_WORKSPACE, LanguageCodeConverters.languageCodeToLocale(targetLanguage));
             if (saveTranslations(session, translations)) {
+                logger.debug("Content translated in " + targetLanguage);
                 return new DeepLTranslationResponseImpl(true, "Content translated in " + targetLanguage);
             } else {
+                logger.warn("Nothing to translate in " + targetLanguage);
                 return new DeepLTranslationResponseImpl(false, "Nothing to translate in " + targetLanguage);
             }
         } catch (RepositoryException e) {
@@ -188,9 +201,11 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     private Map<String, String> generateTranslations(TranslationData data, String srcLanguage, String destLanguage) {
         if (translator == null) {
+            logger.warn("translator is null");
             return null;
         }
         if (!data.hasTextToTranslate()) {
+            logger.warn("There is no text to translate");
             return null;
         }
 
@@ -226,7 +241,7 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
                 final JCRNodeWrapper node = session.getNode(StringUtils.substringBeforeLast(path, SLASH));
                 final String propertyName = StringUtils.substringAfterLast(path, SLASH);
                 if (node.hasProperty(propertyName) && StringUtils.equals(node.getPropertyAsString(propertyName), value)) {
-                    logger.debug("{} is already translated", path);
+                    logger.warn("{} is already translated", path);
                 } else {
                     node.setProperty(propertyName, value);
                     hasSavedSomething.set(true);
@@ -247,8 +262,12 @@ public class DeepLTranslatorServiceImpl implements DeepLTranslatorService {
 
     private boolean isTranslatableNode(JCRNodeWrapper node) {
         try {
-            if (node.isNodeType(Constants.JAHIANT_PAGE)) return true;
-            if (node.isNodeType(Constants.JAHIANT_CONTENT)) return true;
+            if (node.isNodeType(Constants.JAHIANT_PAGE)) {
+                return true;
+            }
+            if (node.isNodeType(Constants.JAHIANT_CONTENT)) {
+                return true;
+            }
         } catch (RepositoryException e) {
             logger.error("", e);
         }

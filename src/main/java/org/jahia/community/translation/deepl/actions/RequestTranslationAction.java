@@ -1,5 +1,12 @@
 package org.jahia.community.translation.deepl.actions;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.ajax.gwt.client.widget.Linker;
@@ -20,14 +27,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 @Component(service = Action.class)
 public class RequestTranslationAction extends Action {
@@ -53,9 +52,8 @@ public class RequestTranslationAction extends Action {
         final boolean subTree = getBooleanParameter(DeeplConstants.PROP_SUB_TREE, parameters);
         final String sourceLanguage = getStringParameter(DeeplConstants.PROP_SRC_LANGUAGE, parameters, currentBrowsedLanguage);
         final String targetLanguage = getStringParameter(DeeplConstants.PROP_DEST_LANGUAGE, parameters);
-
         if (!allLanguages && StringUtils.isBlank(targetLanguage)) {
-            logger.error("No target language specified");
+            logger.warn("No target language specified");
             return ActionResult.BAD_REQUEST;
         }
 
@@ -66,14 +64,20 @@ public class RequestTranslationAction extends Action {
         message.put("text", String.format("TEXT (DeepL action) , successful=%s , %s", response.isSuccessful(), response.getMessage()));
         message.put("messageBoxType", response.isSuccessful() ? "info" : "alert");
         jsonObject.put("messageDisplay", message);
-        if (response.isSuccessful() && StringUtils.equals(targetLanguage, currentBrowsedLanguage))
+        if (response.isSuccessful() && StringUtils.equals(targetLanguage, currentBrowsedLanguage)) {
             jsonObject.put("refreshData", Collections.singletonMap(Linker.REFRESH_MAIN, true));
+        } else {
+            logger.warn(String.format("Translation response is not successful for %s", resource.getNode()));
+        }
+
         return new ActionResult(HttpServletResponse.SC_OK, null, jsonObject);
     }
 
     private <R> R getParameter(String key, Map<String, List<String>> parameters, Function<String, R> parser, R defaultValue) {
         final List<String> values = parameters.get(key);
-        if (CollectionUtils.isEmpty(values)) return defaultValue;
+        if (CollectionUtils.isEmpty(values)) {
+            return defaultValue;
+        }
         return parser.apply(values.get(0));
     }
 

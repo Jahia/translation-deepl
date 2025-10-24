@@ -1,5 +1,13 @@
 package org.jahia.community.translation.deepl.spring;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.ajax.gwt.client.widget.toolbar.action.ExecuteActionItem;
 import org.jahia.ajax.gwt.client.widget.toolbar.action.TranslateMenuActionItem;
@@ -21,15 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.jcr.RepositoryException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SpringConfigExtender implements JahiaAfterInitializationService, DisposableBean {
 
@@ -54,7 +53,9 @@ public class SpringConfigExtender implements JahiaAfterInitializationService, Di
                 int targetIdx = 0;
                 for (Item item : contextMenu.getItems()) {
                     targetIdx++;
-                    if (item.getActionItem() instanceof TranslateMenuActionItem) break;
+                    if (item.getActionItem() instanceof TranslateMenuActionItem) {
+                        break;
+                    }
                 }
 
                 deepLMenu = getBean("Toolbar.Item.PagesTab.DeepLMenu", Menu.class);
@@ -91,7 +92,9 @@ public class SpringConfigExtender implements JahiaAfterInitializationService, Di
     public void destroy() throws Exception {
         if (deepLMenu != null) {
             itemKeys.forEach(deepLMenu::removeItem);
-            if (contextMenu != null) contextMenu.removeItem("deepl-menu");
+            if (contextMenu != null) {
+                contextMenu.removeItem("deepl-menu");
+            }
         }
     }
 
@@ -115,8 +118,9 @@ public class SpringConfigExtender implements JahiaAfterInitializationService, Di
             final Object bean = coreContextOnly ?
                     SpringContextSingleton.getInstance().getContext().getBean(beanID) :
                     SpringContextSingleton.getBean(beanID);
-            if (C.isInstance(bean))
+            if (C.isInstance(bean)) {
                 return (C) bean;
+            }
             logger.error(String.format("The bean named %s is not an instance of %s", beanID, C.toString()));
         } catch (BeansException ignored) {
         }

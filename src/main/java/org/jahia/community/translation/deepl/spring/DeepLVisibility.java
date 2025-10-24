@@ -1,18 +1,17 @@
 package org.jahia.community.translation.deepl.spring;
 
-import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.uicomponents.bean.Visibility;
-import org.jahia.services.usermanager.JahiaUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.uicomponents.bean.Visibility;
+import org.jahia.services.usermanager.JahiaUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeepLVisibility extends Visibility {
 

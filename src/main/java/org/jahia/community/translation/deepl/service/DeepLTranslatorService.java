@@ -1,8 +1,7 @@
 package org.jahia.community.translation.deepl.service;
 
-import org.jahia.services.content.JCRNodeWrapper;
-
 import javax.jcr.RepositoryException;
+import org.jahia.services.content.JCRNodeWrapper;
 
 public interface DeepLTranslatorService {
 
