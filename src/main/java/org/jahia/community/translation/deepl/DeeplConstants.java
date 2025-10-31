@@ -14,6 +14,7 @@ public class DeeplConstants {
     public static final String PROP_SRC_LANGUAGE = "srcLanguage";
     public static final String PROP_DEST_LANGUAGE = "destLanguage";
     public static final String PROP_SUB_TREE = "subTree";
+    public static final String MSG_NOTHING_TO_TRANSLATE = "Nothing to translate in %";
 
     public static final String TRANSLATE_PERMISSION = "deeplTranslate";
 

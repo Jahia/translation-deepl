@@ -1,9 +1,11 @@
 package org.jahia.community.translation.deepl.service;
 
-import javax.jcr.RepositoryException;
 import org.jahia.services.content.JCRNodeWrapper;
+
+import javax.jcr.RepositoryException;
 
 public interface DeepLTranslatorService {
 
-    DeepLTranslationResponse translate(JCRNodeWrapper node, boolean translateSubtree, String sourceLanguage, String targetLanguage, boolean allLanguages) throws RepositoryException;
+    DeepLTranslationResponse translateNode(JCRNodeWrapper node, String sourceLanguage, String targetLanguage) throws RepositoryException, InterruptedException;
+    DeepLTranslationResponse translateProperty(JCRNodeWrapper node, String propertyName, String sourceLanguage, String targetLanguage) throws RepositoryException, InterruptedException;
 }

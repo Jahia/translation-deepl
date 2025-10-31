@@ -3,8 +3,17 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const shared = require('./webpack.shared');
 const moonstone = require("@jahia/moonstone/dist/rulesconfig-wp");
+const {CycloneDxWebpackPlugin} = require('@cyclonedx/webpack-plugin');
+const getModuleFederationConfig = require('@jahia/webpack-config/getModuleFederationConfig');
+const packageJson = require('./package.json');
+
+/** @type {import('@cyclonedx/webpack-plugin').CycloneDxWebpackPluginOptions} */
+const cycloneDxWebpackPluginOptions = {
+    specVersion: '1.4',
+    rootComponentType: 'library',
+    outputLocation: './bom'
+};
 
 module.exports = (env, argv) => {
     let config = {
@@ -18,7 +27,7 @@ module.exports = (env, argv) => {
         },
         resolve: {
             mainFields: ['module', 'main'],
-            extensions: ['.mjs', '.js', '.jsx', 'json', '.scss'],
+            extensions: ['.mjs', '.js', '.jsx', '.json', '.scss'],
             fallback: { "url": false }
         },
         module: {
@@ -79,21 +88,16 @@ module.exports = (env, argv) => {
             ]
         },
         plugins: [
-            new ModuleFederationPlugin({
-                name: "translationDeepl",
+            new ModuleFederationPlugin(getModuleFederationConfig(packageJson, {
                 library: { type: "assign", name: "appShell.remotes.translationDeepl" },
-                filename: "remoteEntry.js",
-                exposes: {
-                    './init': './src/javascript/init'
-                },
                 remotes: {
-                    '@jahia/app-shell': 'appShellRemote',
-                    '@jahia/content-editor': 'appShell.remotes.contentEditor'
-                },
-                shared
-            }),
+                    '@jahia/jcontent': 'appShell.remotes.jcontent'
+                }
+            })),
             new CleanWebpackPlugin({verbose: false}),
-            new CopyWebpackPlugin({patterns: [{from: './package.json', to: ''}]}),        ],
+            new CopyWebpackPlugin({patterns: [{from: './package.json', to: ''}]}),
+            new CycloneDxWebpackPlugin(cycloneDxWebpackPluginOptions)
+        ],
         mode: 'development'
     };
 

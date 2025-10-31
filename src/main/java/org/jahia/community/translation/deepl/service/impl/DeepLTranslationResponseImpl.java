@@ -1,15 +1,12 @@
 package org.jahia.community.translation.deepl.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.community.translation.deepl.service.DeepLTranslationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeepLTranslationResponseImpl implements DeepLTranslationResponse {
-
-    private static final Logger logger = LoggerFactory.getLogger(DeepLTranslationResponseImpl.class);
 
     private final List<String> messages = new ArrayList<>();
     private boolean state;
