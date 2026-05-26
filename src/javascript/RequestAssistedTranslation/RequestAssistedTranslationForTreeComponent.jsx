@@ -27,11 +27,11 @@ export const RequestAssistedTranslationForTreeComponent = ({
     }
 
     if (res.loading) {
-        return (Loading && <Loading {...others}/>) || false;
+        return (Loading && <Loading {...others}/>) || null;
     }
 
     if (!res.checksResult) {
-        return false;
+        return null;
     }
 
     const enabled = node.hasWritePermission && !node.lockedAndCannotBeEdited;
@@ -64,7 +64,7 @@ export const RequestAssistedTranslationForTreeComponent = ({
 };
 
 RequestAssistedTranslationForTreeComponent.propTypes = {
-    path: PropTypes.string,
+    path: PropTypes.string.isRequired,
     render: PropTypes.func.isRequired,
     loading: PropTypes.func
 };

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {useTranslation} from 'react-i18next';
 import {ComponentRendererContext} from '@jahia/ui-extender';
 import {RequestAssistedTranslation} from './RequestAssistedTranslation';
-import {useContentEditorContext, useContentEditorSectionContext, useContentEditorConfigContext} from '@jahia/jcontent';
+import {useContentEditorContext, useContentEditorConfigContext} from '@jahia/jcontent';
 import {useNodeChecks} from '@jahia/data-helper';
 import {useFormikContext} from 'formik';
 
@@ -13,12 +13,9 @@ export const RequestAssistedTranslationComponent = ({
     ...others
 }) => {
     const editorContext = useContentEditorContext();
-    const editorSectionContext = useContentEditorSectionContext();
     const formikContext = useFormikContext();
     const componentRenderer = useContext(ComponentRendererContext);
     const editorConfigContext = useContentEditorConfigContext();
-
-    console.debug('RequestTranslationAiAssistedForAllLanguagesActionComponent {editorContext, editorSectionContext, formikContext, editorConfigContext}', {editorContext, editorSectionContext, formikContext, editorConfigContext});
     // Load namespace
     useTranslation('ai-assisted-translations');
 
@@ -68,8 +65,6 @@ export const RequestAssistedTranslationComponent = ({
 };
 
 RequestAssistedTranslationComponent.propTypes = {
-    formik: PropTypes.object.isRequired,
-    editorContext: PropTypes.object.isRequired,
     render: PropTypes.func.isRequired,
     loading: PropTypes.func
 };

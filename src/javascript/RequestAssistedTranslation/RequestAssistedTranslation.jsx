@@ -1,41 +1,35 @@
 import React, {useState} from 'react';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
 import {Button, Dropdown, Loader, Typography} from '@jahia/moonstone';
-import {useTranslation} from 'react-i18next';
+import {useTranslation, Trans} from 'react-i18next';
 import {useApolloClient} from '@apollo/client';
 import PropTypes from 'prop-types';
 import {getMutationTranslateNode, suggestTranslationForLanguage} from './RequestAssistedTranslation.gql';
 import styles from './RequestAssistedTranslation.scss';
 import {registry} from '@jahia/ui-extender';
 
-const triggerRefetch = (name, queryParams) => {
-    const refetch = registry.get('refetcher', name);
-    if (!refetch?.refetch) {
-        return;
-    }
-
-    if (queryParams) {
-        refetch.refetch(queryParams);
-    } else {
-        refetch.refetch();
-    }
-};
-
+// This function find all the refetch registered in JContent to refetch the content once the translation is done to refresh the view
 const triggerRefetchAll = () => {
     registry.find({type: 'refetcher'}).forEach(refetch => triggerRefetch(refetch.key));
 };
 
-const getInitialState = (siteLanguages, sourceLanguage) => {
-    let languageObject = siteLanguages.find(siteLanguage => siteLanguage.language === sourceLanguage);
-    console.debug('Found language matching', languageObject, siteLanguages, sourceLanguage);
-    return languageObject;
+const triggerRefetch = name => {
+    const refetcher = registry.get('refetcher', name);
+    if (!refetcher?.refetch) {
+        return;
+    }
+
+    refetcher.refetch();
 };
 
-// eslint-disable-next-line max-params
-const handleSuggestionCall = (suggestTranslation, formik, setErrorState, setIsLoading, onClose, setErrorMessage) => {
+const findLanguageObject = (siteLanguages, sourceLanguage) => {
+    return siteLanguages.find(siteLanguage => siteLanguage.language === sourceLanguage);
+};
+
+const handleSuggestionCall = ({suggestTranslation, formik, setErrorState, setIsLoading, onClose, setErrorMessage}) => {
     suggestTranslation().then(data => {
         // First we transform data as some fields are multivalued and in this case the fieldname contains the index at the end fieldname___index___, we need to group the values per firld name amnd use an array for multivalued ones
-        const fields = {};
+        const fields = new Map();
         data.forEach(suggestion => {
             const key = suggestion.fieldName;
             // Detect if it is a multiple field
@@ -73,12 +67,11 @@ const handleSuggestionCall = (suggestTranslation, formik, setErrorState, setIsLo
     }).catch(err => {
         console.error(err);
         setErrorState('translation_error');
-        setErrorMessage(err.message);
+        setErrorMessage(err?.message || '');
     });
 };
 
-// eslint-disable-next-line max-params
-const handleTreeTranslationCall = (translateTreeMutation, setErrorState, setIsLoading, onClose, client, setErrorMessage) => {
+const handleTreeTranslationCall = ({translateTreeMutation, setErrorState, setIsLoading, onClose, client, setErrorMessage}) => {
     translateTreeMutation().then(() => {
         client.reFetchObservableQueries();
         triggerRefetchAll();
@@ -87,7 +80,7 @@ const handleTreeTranslationCall = (translateTreeMutation, setErrorState, setIsLo
     }).catch(err => {
         console.error(err);
         setErrorState('translation_error');
-        setErrorMessage(err.message);
+        setErrorMessage(err?.message || '');
     });
 };
 
@@ -113,7 +106,7 @@ export const RequestAssistedTranslation = ({
     onClose
 }) => {
     const {t} = useTranslation('ai-assisted-translations');
-    const [selected, setSelected] = useState(getInitialState(siteLanguages, sourceLanguage));
+    const [selected, setSelected] = useState(findLanguageObject(siteLanguages, sourceLanguage));
     const [errorState, setErrorState] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -139,14 +132,15 @@ export const RequestAssistedTranslation = ({
     const handleClickDialog = () => {
         setIsLoading(true);
         if (formik !== undefined) {
-            handleSuggestionCall(suggestTranslation, formik, setErrorState, setIsLoading, onClose, setErrorMessage);
+            handleSuggestionCall({suggestTranslation, formik, setErrorState, setIsLoading, onClose, setErrorMessage});
         } else if (isTranslateTree === true) {
-            handleTreeTranslationCall(translateTreeMutation, setErrorState, setIsLoading, onClose, client, setErrorMessage);
+            handleTreeTranslationCall({translateTreeMutation, setErrorState, setIsLoading, onClose, client, setErrorMessage});
         }
     };
 
-    let sourceLanguageObject = siteLanguages.find(siteLanguage => siteLanguage.language === sourceLanguage);
-    let targetLanguageObject = siteLanguages.find(siteLanguage => siteLanguage.language === targetLanguage);
+    const siteLanguageMap = new Map(siteLanguages.map(l => [l.language, l]));
+    let sourceLanguageObject = siteLanguageMap.get(sourceLanguage);
+    let targetLanguageObject = siteLanguageMap.get(targetLanguage);
     let translationLanguages = {
         sourceLanguage: sourceLanguageObject.displayName,
         sourceLanguageUI: sourceLanguageObject.uiLanguageDisplayName,
@@ -180,7 +174,7 @@ export const RequestAssistedTranslation = ({
                                 isDisabled={isLoading}
                                 data-sel-role="from-language-selector"
                                 data={availableSourceLanguages.flatMap(element => {
-                                    let optionLanguage = siteLanguages.find(siteLanguage => siteLanguage.language === (isTranslateTree ? element.language : element));
+                                    let optionLanguage = siteLanguageMap.get(isTranslateTree ? element.language : element);
                                     // Get rid of the language in the dropdown if the language is not available in siteLanguages, as it means that the language is not available for translation
                                     if (!optionLanguage) {
                                         return [];
@@ -191,13 +185,15 @@ export const RequestAssistedTranslation = ({
                                         label: `${optionLanguage.displayName} (${optionLanguage.uiLanguageDisplayName})`
                                     }];
                                 })}
-                                onChange={(e, item) => setSelected(getInitialState(siteLanguages, item.value))}
+                                onChange={(e, item) => setSelected(findLanguageObject(siteLanguages, item.value))}
                             />
                         </>}
                     {!showDropdown &&
                         <Typography variant="subheading">
-                            {/* eslint-disable-next-line react/no-danger */}
-                            <span dangerouslySetInnerHTML={{__html: t('ai-assisted-translations:label.dialogDescriptionAllProperties', translationLanguages)}}/>
+                            <Trans i18nKey="ai-assisted-translations:label.dialogDescriptionAllProperties"
+                                   values={translationLanguages}
+                                   components={{strong: <strong/>}}
+                            />
                         </Typography>}
                     {isLoading &&
                         <LoaderOverlay/>}
@@ -233,7 +229,7 @@ export const RequestAssistedTranslation = ({
                 <DialogContent>
                     <DialogContentText
                         id="alert-dialog-description"
-                    >{errorMessage === undefined ? t('ai-assisted-translations:label.errorContentAllProperties') : errorMessage}
+                    >{errorMessage || t('ai-assisted-translations:label.errorContentAllProperties')}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
