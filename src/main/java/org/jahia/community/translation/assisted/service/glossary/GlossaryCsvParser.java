@@ -3,7 +3,7 @@ package org.jahia.community.translation.assisted.service.glossary;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
@@ -46,8 +46,9 @@ public class GlossaryCsvParser {
                     String value = i < csvRecord.size() ? csvRecord.get(i) : "";
                     row.put(headers.get(i), StringUtils.trimToEmpty(value));
                 }
-                validateRow(lineNumber, row, headers, errors);
-                rows.add(row);
+                if (validateRow(lineNumber, row, headers, errors)) {
+                    rows.add(row);
+                }
             }
         }
 
@@ -85,20 +86,22 @@ public class GlossaryCsvParser {
         }
     }
 
-    private void validateRow(int lineNumber, Map<String, String> row, List<String> headers, List<String> errors) {
+    private boolean validateRow(int lineNumber, Map<String, String> row, List<String> headers, List<String> errors) {
         String key = row.get(headers.get(0));
         if (StringUtils.isBlank(key)) {
             errors.add("Line " + lineNumber + ": key column is mandatory");
-            return;
+            return false;
         }
 
         boolean hasAtLeastOneTerm = headers.stream()
                 .filter(this::isLanguageHeader)
                 .anyMatch(header -> StringUtils.isNotBlank(row.get(header)));
-        
+
         if (!hasAtLeastOneTerm) {
             errors.add("Line " + lineNumber + ": row has no translatable term value");
+            return false;
         }
+        return true;
     }
 
     private boolean isLanguageHeader(String header) {

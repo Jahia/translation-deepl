@@ -2,7 +2,7 @@ package org.jahia.community.translation.assisted.service.impl.deepl;
 
 import com.deepl.api.*;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jahia.api.Constants;
 import org.jahia.community.translation.assisted.graphql.TranslatedField;
@@ -11,6 +11,7 @@ import org.jahia.community.translation.assisted.service.TranslationServicesManag
 import org.jahia.community.translation.assisted.service.TranslatorService;
 import org.jahia.community.translation.assisted.service.glossary.GlossaryService;
 import org.jahia.community.translation.assisted.service.glossary.ResolvedGlossary;
+import org.jahia.community.translation.assisted.service.impl.AssistedTranslationResponseImpl;
 import org.jahia.community.translation.assisted.service.impl.TranslationData;
 import org.jahia.modules.graphql.provider.dxm.DataFetchingException;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -62,7 +63,9 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
 
         try {
             hasSavedSomething = session.hasPendingChanges();
-            session.save();
+            if (!hasSavedSomething) {
+                session.save();
+            }
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("", e);
@@ -78,7 +81,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
     }
 
     @Override
-    public Boolean isAvailable() {
+    public boolean isAvailable() {
         return available;
     }
 
@@ -91,8 +94,8 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
             return;
         }
         logger.info("Activating DeeplTranslator Service");
-        final String authKey = properties.getOrDefault(DEEPL_API_KEY, null);
-        if (authKey == null || properties.getOrDefault(OPENAI_API_KEY, null) != null) {
+        final String authKey = properties.get(DEEPL_API_KEY);
+        if (authKey == null || properties.get(OPENAI_API_KEY) != null) {
             available = false;
             return;
         }
@@ -152,11 +155,11 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
         if (!siteLanguages.contains(targetLanguage)) {
             final String warnMsg = String.format("The language %s is not allowed on the site", targetLanguage);
             logger.warn(warnMsg);
-            return new DeepLAssistedTranslationResponseImpl(false, warnMsg);
+            return new AssistedTranslationResponseImpl(false, warnMsg);
         } else if (StringUtils.equals(sourceLanguage, targetLanguage)) {
             final String warnMsg = String.format("The language %s is both the source and target languages", targetLanguage);
             logger.warn(warnMsg);
-            return new DeepLAssistedTranslationResponseImpl(false, warnMsg);
+            return new AssistedTranslationResponseImpl(false, warnMsg);
         }
 
         final JCRSessionWrapper session = JCRSessionFactory.getInstance().getCurrentUserSession(pNodeSession.getWorkspace().getName(), LanguageCodeConverters.languageCodeToLocale(sourceLanguage));
@@ -164,7 +167,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
         if (!session.nodeExists(path)) {
             final String warnMsg = String.format("Impossible to translate from %s since the node doesn't exist in this language", sourceLanguage);
             logger.warn(warnMsg);
-            return new DeepLAssistedTranslationResponseImpl(false, warnMsg);
+            return new AssistedTranslationResponseImpl(false, warnMsg);
         }
         final JCRNodeWrapper node = session.getNode(path);
         final TranslationData data = new TranslationData();
@@ -184,7 +187,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
         if (MapUtils.isEmpty(translations)) {
             final String warnMsg = String.format(MSG_NOTHING_TO_TRANSLATE, targetLanguage);
             logger.warn(warnMsg);
-            return new DeepLAssistedTranslationResponseImpl(false, warnMsg);
+            return new AssistedTranslationResponseImpl(false, warnMsg);
         }
 
         try {
@@ -192,17 +195,17 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
             if (saveTranslations(session, translations)) {
                 final String debugMsg = String.format("Content translated in %s", targetLanguage);
                 logger.debug(debugMsg);
-                return new DeepLAssistedTranslationResponseImpl(true, debugMsg);
+                return new AssistedTranslationResponseImpl(true, debugMsg);
             } else {
                 final String warnMsg = String.format(MSG_NOTHING_TO_TRANSLATE, targetLanguage);
                 logger.warn(warnMsg);
-                return new DeepLAssistedTranslationResponseImpl(false, warnMsg);
+                return new AssistedTranslationResponseImpl(false, warnMsg);
             }
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("", e);
             }
-            return new DeepLAssistedTranslationResponseImpl(false, "An error occurred while translating the content in " + targetLanguage);
+            return new AssistedTranslationResponseImpl(false, "An error occurred while translating the content in " + targetLanguage);
         }
     }
 
@@ -234,7 +237,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
             String deeplSrcLanguage = translatorSourceLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), sourceLocaleFromCode.getLanguage())).findFirst().map(Language::getCode).orElse(null);
             String deeplTargetLanguage = translatorTargetLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), targetLocaleFromCode.getLanguage())).findFirst().map(Language::getCode).orElse(null);
             if (deeplSrcLanguage == null || deeplTargetLanguage == null) {
-                throw new DataFetchingException(String.format("DeepL doesn't support the language %s", deeplSrcLanguage == null ? sourceLocaleFromCode.getDisplayName():targetLocaleFromCode.getDisplayName()));
+                throw new DataFetchingException(String.format("DeepL doesn't support the language %s", deeplSrcLanguage == null ? sourceLocaleFromCode.getDisplayName() : targetLocaleFromCode.getDisplayName()));
             }
             final String destDeepLLanguage = translationServicesManager.getTargetLanguages().getOrDefault(deeplTargetLanguage, deeplTargetLanguage);
             TextTranslationOptions textTranslationOptions = new TextTranslationOptions();

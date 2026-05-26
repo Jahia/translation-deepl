@@ -42,7 +42,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "Connection": "keep-alive",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:08 GMT",
+                          "date": "Tue, 26 May 2026 15:27:13 GMT",
                           "content-type": "application/json;charset=UTF-8",
                           "Vary": "Accept-Encoding"
                         }
@@ -85,7 +85,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "Connection": "keep-alive",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:08 GMT",
+                          "date": "Tue, 26 May 2026 15:27:13 GMT",
                           "content-type": "application/json;charset=UTF-8",
                           "Vary": "Accept-Encoding"
                         }
@@ -128,7 +128,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "Connection": "keep-alive",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:08 GMT",
+                          "date": "Tue, 26 May 2026 15:27:13 GMT",
                           "content-type": "application/json;charset=UTF-8",
                           "Vary": "Accept-Encoding"
                         }
@@ -171,7 +171,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "Connection": "keep-alive",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:08 GMT",
+                          "date": "Tue, 26 May 2026 15:27:14 GMT",
                           "content-type": "application/json;charset=UTF-8",
                           "Vary": "Accept-Encoding"
                         }
@@ -194,7 +194,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "cache-control": "no-store",
                           "content-encoding": "gzip",
                           "content-type": "text/html;charset=UTF-8",
-                          "date": "Tue, 26 May 2026 14:09:09 GMT",
+                          "date": "Tue, 26 May 2026 15:27:14 GMT",
                           "vary": "accept-encoding",
                           "transfer-encoding": "chunked"
                         }
@@ -502,7 +502,7 @@ cypress/e2e/ui/translate.cy.ts:
                             }, 60000)
                             window.appShell = {
                                 remotes: {},
-                                scripts: ["/modules/tags/javascript/apps/tagmanager.js","/modules/jahia-user-entries/configs/jahiaUserEntries.js?v=1779804549005","/modules/linkchecker/javascript/apps/linkchecker.js","/modules/jahia-authentication/javascript/apps/register.js","/modules/jexperience/configs/jexperience.js?v=1779804549005","/modules/kibana-dashboards-provider/configs/kibanaDashboardsProvider.js?v=1779804549005","/modules/jahia-ui-root/configs/jahiaui.js?v=1779804549005","/modules/site-settings-publication/javascript/apps/sitesettingspublication.js","/modules/se-extra-views/javascript/apps/registerExtensions.js","/modules/bootstrap4-components/javascript/apps/registerExtensions.js","/modules/importContentFromJson/configs/importContentFromJson.js?v=1779804549005","/modules/site-settings-error-pages/javascript/apps/register.js","/modules/qa-module/javascript/apps/qa-module-register.js","/modules/jcontent/configs/jcontent.js?v=1779804549005"],
+                                scripts: ["/modules/tags/javascript/apps/tagmanager.js","/modules/jahia-user-entries/configs/jahiaUserEntries.js?v=1779809234218","/modules/linkchecker/javascript/apps/linkchecker.js","/modules/jahia-authentication/javascript/apps/register.js","/modules/jexperience/configs/jexperience.js?v=1779809234218","/modules/kibana-dashboards-provider/configs/kibanaDashboardsProvider.js?v=1779809234218","/modules/jahia-ui-root/configs/jahiaui.js?v=1779809234218","/modules/site-settings-publication/javascript/apps/sitesettingspublication.js","/modules/se-extra-views/javascript/apps/registerExtensions.js","/modules/bootstrap4-components/javascript/apps/registerExtensions.js","/modules/importContentFromJson/configs/importContentFromJson.js?v=1779809234218","/modules/site-settings-error-pages/javascript/apps/register.js","/modules/qa-module/javascript/apps/qa-module-register.js","/modules/jcontent/configs/jcontent.js?v=1779809234218"],
                                 targetId: "reactComponent",
                             };
                             window.jahiaCommons = function (module) {
@@ -570,7 +570,7 @@ cypress/e2e/ui/translate.cy.ts:
                         Status: 200
                         Request headers: {
                           "sec-ch-ua-platform": "\"macOS\"",
-                          "CSRFTOKEN": "GDMW-0UHL-XJD6-G4C0-HG71-P7ZH-GUZ9-8UPE",
+                          "CSRFTOKEN": "KDOM-JC34-2JWV-0PX0-FBTB-YDBG-NF8K-75QS",
                           "Referer": "https://digitall.jahia.localhost/jahia/jcontent/translateSite/fr/pages/home",
                           "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
                           "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
@@ -582,7 +582,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "Connection": "keep-alive",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:09 GMT",
+                          "date": "Tue, 26 May 2026 15:27:14 GMT",
                           "content-type": "application/json;charset=US-ASCII",
                           "Vary": "Accept-Encoding"
                         }
@@ -656,9 +656,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "2c7fd08afe21f934421f00aceb0f5127.194ac349ae3",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:09 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:15 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:09 GMT",
+                          "date": "Tue, 26 May 2026 15:27:15 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 28 Jan 2025 09:18:36 GMT",
                           "Vary": "Accept-Encoding"
@@ -679,9 +679,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "791e53012026a5fc522bfb0304b8d027.17727330708",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Thu, 21 Jan 2021 23:06:31 GMT",
                           "Vary": "Accept-Encoding"
@@ -702,9 +702,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "a661822c2e0b9cfe61ca1d1bc34dbdfa.17c940831b3",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 18 Oct 2021 15:32:17 GMT",
                           "Vary": "Accept-Encoding"
@@ -725,9 +725,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "7e7f3d2c3a34363ad870d4e269322d5a.18dc6c07550",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 20 Feb 2024 13:41:58 GMT",
                           "Vary": "Accept-Encoding"
@@ -748,9 +748,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "ad13367c030e9ef63c3f266e7914bc61.19915484523",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Thu, 04 Sep 2025 15:11:21 GMT",
                           "Vary": "Accept-Encoding"
@@ -771,9 +771,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "b2f4081bab8074edf51231632432ffa8.19d0bbc2ea1",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 20 Mar 2026 14:52:55 GMT",
                           "Vary": "Accept-Encoding"
@@ -796,7 +796,7 @@ cypress/e2e/ui/translate.cy.ts:
                           "Connection": "keep-alive",
                           "expires": "Wed, 09 May 1979 05:30:00 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "text/html;charset=UTF-8",
                           "Vary": "Accept-Encoding"
                         }
@@ -816,9 +816,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "f8576ade75aa2a603cab44cdd0146469.19d2649c748",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:10 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:10 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 25 Mar 2026 18:37:42 GMT",
                           "Vary": "Accept-Encoding"
@@ -841,9 +841,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "b88f09fc826ffb0632bc2dae0a201de0.19cbcebb526",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:11 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:11 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Thu, 05 Mar 2026 07:34:49 GMT",
                           "Vary": "Accept-Encoding"
@@ -864,14 +864,14 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "4dcea08e71f453ea714e706b454aabf4.19c579209fc",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:11 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:11 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 13 Feb 2026 15:15:14 GMT",
                           "Vary": "Accept-Encoding"
                         }
-            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=en&site=4436d245-04a8-461c-847b-e2fcbf887e30&workspace=default&windowId=1899620451
+            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=en&site=4436d245-04a8-461c-847b-e2fcbf887e30&workspace=default&windowId=-1157431910
                         Status: 200
                         Request headers: {
                           "X-GWT-Permutation": "E664CE175BDCC1552654CD2CCB831ED6",
@@ -888,9 +888,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "cache-control": "public, max-age=2678400",
                           "content-encoding": "gzip",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:11 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:12 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-disposition": "attachment",
                           "content-type": "application/json;charset=utf-8",
                           "Vary": "Accept-Encoding"
@@ -913,9 +913,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "e604513bc8fe458ed658e7ce757fef26.19330a51a86",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 15 Nov 2024 16:25:46 GMT",
                           "Vary": "Accept-Encoding"
@@ -936,9 +936,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "c2cd892f2ba85a396aae4d987c50bec6.19b0748f75f",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 10 Dec 2025 08:03:01 GMT",
                           "Vary": "Accept-Encoding"
@@ -959,9 +959,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "0101af9aedeedffe14170f2500db27cf.197bfbc9805",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 30 Jun 2025 07:28:17 GMT",
                           "Vary": "Accept-Encoding"
@@ -995,9 +995,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "5c1cd877b4a06453d42ab9e6b2d77458.19bd5a3f970",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 19 Jan 2026 09:44:11 GMT",
                           "Vary": "Accept-Encoding"
@@ -1018,9 +1018,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "c32e1cc6d9fd49b1186498620666e080.19473ea07ed",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 17 Jan 2025 10:58:24 GMT",
                           "Vary": "Accept-Encoding"
@@ -1041,9 +1041,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "c4acfe9630de7b4d9327e38a458d419e.18ecef66b92",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Thu, 11 Apr 2024 21:00:39 GMT",
                           "Vary": "Accept-Encoding"
@@ -1064,9 +1064,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "1ea2101f53bcf4036c6dfa780d1cd856.194f979d6a6",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 12 Feb 2025 09:24:59 GMT",
                           "Vary": "Accept-Encoding"
@@ -1087,13 +1087,15 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "d89339f344800396c00d934f3c834aa0.19c6c285789",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:16 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:16 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 17 Feb 2026 15:11:49 GMT",
                           "Vary": "Accept-Encoding"
                         }
+          cons:log (K): %c Server Settings EE routes have been registered,
+                        color: #3c8cba
             cy:xhr (K): GET https://digitall.jahia.localhost/modules/module-manager/javascript/locales/en.json
                         Status: 200
                         Request headers: {
@@ -1110,9 +1112,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "96e683e4e6e4c5b90fc1d0270b147e12.19b03d1a32b",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 09 Dec 2025 15:53:49 GMT",
                           "Vary": "Accept-Encoding"
@@ -1133,9 +1135,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "9689f24f2437ac22c37d602778949edd.19b12354adc",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 12 Dec 2025 10:57:21 GMT",
                           "Vary": "Accept-Encoding"
@@ -1156,15 +1158,13 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "e5f65b26aac134ba82e399c3cc454198.19d19a01d64",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 23 Mar 2026 07:36:56 GMT",
                           "Vary": "Accept-Encoding"
                         }
-          cons:log (K): %c Server Settings EE routes have been registered,
-                        color: #3c8cba
             cy:xhr (K): GET https://digitall.jahia.localhost/modules/osgi-configurations-manager/javascript/locales/en.json
                         Status: 200
                         Request headers: {
@@ -1181,9 +1181,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "4234e8fcf8611c5f622792bc4cbe5d00.19dbeec9f7f",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 24 Apr 2026 09:57:51 GMT",
                           "Vary": "Accept-Encoding"
@@ -1204,9 +1204,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "de64fa5597baf05ba043a55db03ec641.19e3feffebb",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 19 May 2026 11:12:33 GMT",
                           "Vary": "Accept-Encoding"
@@ -1231,9 +1231,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "2f9d62f219945765d72a499afe625bcd.19cb9cabc97",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 04 Mar 2026 16:59:57 GMT",
                           "Vary": "Accept-Encoding"
@@ -1254,9 +1254,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "bc606e301e31d97247a28a3105da76e1.19e6036f812",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 25 May 2026 17:37:55 GMT",
                           "Vary": "Accept-Encoding"
@@ -1277,16 +1277,16 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "a84e1c490f325957371fe4ff21f45a9e.19e405c3a20",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 19 May 2026 13:10:46 GMT",
                           "Vary": "Accept-Encoding"
                         }
           cons:log (K): %c moduleManagementCommunity registered routes,
                         color: #3c8cba
-            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=fr&site=/sites/translateSite&workspace=default&windowId=1899620451
+            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=fr&site=/sites/translateSite&workspace=default&windowId=-1157431910
                         Status: 200
                         Request headers: {
                           "X-GWT-Permutation": "E664CE175BDCC1552654CD2CCB831ED6",
@@ -1303,9 +1303,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "cache-control": "public, max-age=2678400",
                           "content-encoding": "gzip",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-disposition": "attachment",
                           "content-type": "application/json;charset=utf-8",
                           "Vary": "Accept-Encoding"
@@ -1326,14 +1326,14 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "5bc77d0a813ef1ef2ff2727c117520dc.19d00300ef2",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 18 Mar 2026 09:04:02 GMT",
                           "Vary": "Accept-Encoding"
                         }
-            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=fr&site=/sites/translateSite&workspace=default&windowId=1899620451
+            cy:xhr (K): POST https://digitall.jahia.localhost/gwt/contentManager.gwt?lang=fr&site=/sites/translateSite&workspace=default&windowId=-1157431910
                         Status: 200
                         Request headers: {
                           "X-GWT-Permutation": "E664CE175BDCC1552654CD2CCB831ED6",
@@ -1350,9 +1350,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "cache-control": "public, max-age=2678400",
                           "content-encoding": "gzip",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-disposition": "attachment",
                           "content-type": "application/json;charset=utf-8",
                           "Vary": "Accept-Encoding"
@@ -1373,9 +1373,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "cc6d764fc48a9c70d1cec9c7161d1f1d.19b07335f2f",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 10 Dec 2025 07:39:25 GMT",
                           "Vary": "Accept-Encoding"
@@ -1396,9 +1396,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "2ee11df674d9985e2ea42612b4fe9930.19b46730f77",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Mon, 22 Dec 2025 14:25:04 GMT",
                           "Vary": "Accept-Encoding"
@@ -1419,9 +1419,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "a9cbfa3affc70b7ac1431b6c82925633.18ed198178d",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Fri, 12 Apr 2024 09:16:29 GMT",
                           "Vary": "Accept-Encoding"
@@ -1442,9 +1442,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "a8bae2bda1c8bc8d7ff8483f554ab5ee.19b043b8c18",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Tue, 09 Dec 2025 17:49:30 GMT",
                           "Vary": "Accept-Encoding"
@@ -1465,9 +1465,9 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "c65602bd574e073d2de1b156a334ddd2.1889c82402b",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Thu, 08 Jun 2023 19:36:01 GMT",
                           "Vary": "Accept-Encoding"
@@ -1488,24 +1488,40 @@ cypress/e2e/ui/translate.cy.ts:
                           "Content-Encoding": "br",
                           "etag": "e7cc2738b6f7e7b070fda5f257537698.19b0748f4b8",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:13 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:17 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:13 GMT",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
                           "content-type": "application/json",
                           "last-modified": "Wed, 10 Dec 2025 08:03:00 GMT",
                           "Vary": "Accept-Encoding"
                         }
          cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
+            cy:xhr (K): POST https://digitall.jahia.localhost/modules/CsrfServlet
+                        Status: 200
+                        Request headers: {
+                          "sec-ch-ua-platform": "\"macOS\"",
+                          "CSRFTOKEN": "KDOM-JC34-2JWV-0PX0-FBTB-YDBG-NF8K-75QS",
+                          "Referer": "https://digitall.jahia.localhost/cms/editframe/default/fr/sites/translateSite/home.html?redirect=false",
+                          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
+                          "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
+                          "sec-ch-ua-mobile": "?0"
+                        }
+                        Response headers: {
+                          "Transfer-Encoding": "chunked",
+                          "cache-control": "public, must-revalidate, max-age=1",
+                          "Content-Encoding": "br",
+                          "Connection": "keep-alive",
+                          "Keep-Alive": "timeout=5",
+                          "date": "Tue, 26 May 2026 15:27:17 GMT",
+                          "content-type": "application/json;charset=US-ASCII",
+                          "Vary": "Accept-Encoding"
+                        }
          cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
          cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
          cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
         cy:command (K): assert	expected **<button.moonstone-button.moonstone-button_default.moonstone-button_ghost.moonstone-icon.alignCenter>** to exist in the DOM
                         Actual: 	"<button.moonstone-button.moonstone-button_default.moonstone-button_ghost.moonstone-icon.alignCenter>"
                         Expected: 	"<button.moonstone-button.moonstone-button_default.moonstone-button_ghost.moonstone-icon.alignCenter>"
-        cy:command (K): click
-        cy:command (K): get	div[data-sel-role='translate-language-dialog']
-        cy:command (K): assert	expected **<div.jss22.jss8>** to be **visible**
-        cy:command (K): get	.moonstone-dropdown_container[data-sel-role="from-language-selector"]
         cy:command (K): click
             cy:xhr (K): GET https://digitall.jahia.localhost/modules/ai-assisted-translations/javascript/locales/en.json
                         Status: 200
@@ -1521,35 +1537,20 @@ cypress/e2e/ui/translate.cy.ts:
                           "Transfer-Encoding": "chunked",
                           "cache-control": "public, must-revalidate, max-age=1, public, max-age=2678400",
                           "Content-Encoding": "br",
-                          "etag": "95915a0b3111e131db27947cb77f2440.19e649d8745",
+                          "etag": "fc70042a249039397101293f1884141c.19e64e3e30b",
                           "Connection": "keep-alive",
-                          "expires": "Fri, 26 Jun 2026 00:39:16 GMT",
+                          "expires": "Fri, 26 Jun 2026 01:57:18 GMT",
                           "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:16 GMT",
+                          "date": "Tue, 26 May 2026 15:27:18 GMT",
                           "content-type": "application/json",
-                          "last-modified": "Tue, 26 May 2026 14:08:25 GMT",
+                          "last-modified": "Tue, 26 May 2026 15:25:16 GMT",
                           "Vary": "Accept-Encoding"
                         }
-            cy:xhr (K): POST https://digitall.jahia.localhost/modules/CsrfServlet
-                        Status: 200
-                        Request headers: {
-                          "sec-ch-ua-platform": "\"macOS\"",
-                          "CSRFTOKEN": "GDMW-0UHL-XJD6-G4C0-HG71-P7ZH-GUZ9-8UPE",
-                          "Referer": "https://digitall.jahia.localhost/cms/editframe/default/fr/sites/translateSite/home.html?redirect=false",
-                          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
-                          "sec-ch-ua": "\"Chromium\";v=\"148\", \"Google Chrome\";v=\"148\", \"Not/A)Brand\";v=\"99\"",
-                          "sec-ch-ua-mobile": "?0"
-                        }
-                        Response headers: {
-                          "Transfer-Encoding": "chunked",
-                          "cache-control": "public, must-revalidate, max-age=1",
-                          "Content-Encoding": "br",
-                          "Connection": "keep-alive",
-                          "Keep-Alive": "timeout=5",
-                          "date": "Tue, 26 May 2026 14:09:16 GMT",
-                          "content-type": "application/json;charset=US-ASCII",
-                          "Vary": "Accept-Encoding"
-                        }
+        cy:command (K): get	div[data-sel-role='translate-language-dialog']
+        cy:command (K): assert	expected **<div.jss22.jss8>** to be **visible**
+        cy:command (K): get	.moonstone-dropdown_container[data-sel-role="from-language-selector"]
+        cy:command (K): click
+         cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
         cy:command (K): find	.moonstone-menu:not(.moonstone-hidden)
         cy:command (K): find	.moonstone-menuItem
         cy:command (K): assert	expected **[ <li.moonstone-listItem.flexRow.moonstone-menuItem>, 2 more... ]** to have a length of **3**
@@ -1572,5 +1573,7 @@ cypress/e2e/ui/translate.cy.ts:
         cy:command (K): assert	expected **div[data-sel-role=**'translate-language-dialog'**]** not to exist in the DOM
                         Actual: 	"div[data-sel-role=**'translate-language-dialog'**]"
                         Expected: 	"div[data-sel-role='translate-language-dialog']"
+         cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
+            cy:xhr (K): POST https://digitall.jahia.localhost/modules/CsrfServlet
          cons:warn (!): The property `label` is deprecated in the Dropdown component. Use `placeholder` to show text when no value is selected; otherwise, the label for the selected value is automatically displayed.
 

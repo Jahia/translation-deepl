@@ -32,19 +32,20 @@ public class GqlQueryTranslation {
             @GraphQLName("sourceLanguage") @GraphQLDescription("Language to translate from") String sourceLocale,
             @GraphQLName("targetLanguage") @GraphQLDescription("Language to translate to") String targetLocale
     ) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Translating %s from %s to %s", node.getPath(), sourceLocale, targetLocale));
-        }
         try {
             TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
             if (translatorService == null) {
                 logger.warn("No TranslatorService available – translation service is not configured");
                 return Collections.emptyList();
             }
-            logger.info("Translated translations from {} to {} with {}", sourceLocale, targetLocale, translatorService.getProviderKey());
-            if (Boolean.TRUE.equals(translatorService.isAvailable())) {
+            if (translatorService.isAvailable()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Translating %s from %s to %s", node.getPath(), sourceLocale, targetLocale));
+                }
+                logger.info("Translating from {} to {} with provider {}", sourceLocale, targetLocale, translatorService.getProviderKey());
                 return translatorService.suggestTranslationForNode(node.getNode(), sourceLocale, targetLocale);
             } else {
+                logger.warn("TranslatorService with provider key {} is not available", translatorService.getProviderKey());
                 return Collections.emptyList();
             }
         } catch (RepositoryException e) {

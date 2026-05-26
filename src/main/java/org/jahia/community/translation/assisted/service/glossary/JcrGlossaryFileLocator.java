@@ -1,6 +1,6 @@
 package org.jahia.community.translation.assisted.service.glossary;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.community.translation.assisted.AssistedTranslationsConstants;
 import org.jahia.services.content.JCRContentUtils;

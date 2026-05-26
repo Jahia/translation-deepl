@@ -4,7 +4,6 @@ import graphql.annotations.annotationTypes.GraphQLDescription;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLTypeExtension;
-import org.jahia.community.translation.assisted.service.AssistedTranslationResponse;
 import org.jahia.community.translation.assisted.service.TranslatorService;
 import org.jahia.modules.graphql.provider.dxm.DataFetchingException;
 import org.jahia.modules.graphql.provider.dxm.node.GqlJcrNodeMutation;
@@ -26,12 +25,12 @@ public class GqlJcrNodeMutationAssistedTranslation {
 
     @GraphQLField
     @GraphQLDescription("Translate node")
-    public AssistedTranslationResponse translateNode(
+    public GqlAssistedTranslationResponse translateNode(
             @GraphQLName("sourceLocale") @GraphQLDescription("Locale to translate from") String sourceLocale,
             @GraphQLName("targetLocale") @GraphQLDescription("Locale to translate to") String targetLocale
     ) throws InterruptedException {
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Translating %s from %s to %s", nodeMutation.getNode().getPath(), sourceLocale, targetLocale));
+            logger.debug("Translating {} from {} to {}", nodeMutation.getNode().getPath(), sourceLocale, targetLocale);
         }
 
         TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
@@ -41,25 +40,25 @@ public class GqlJcrNodeMutationAssistedTranslation {
         }
 
         try {
-            return translatorService.translateNode(nodeMutation.getNode().getNode(), sourceLocale, targetLocale);
+            return new GqlAssistedTranslationResponse(translatorService.translateNode(nodeMutation.getNode().getNode(), sourceLocale, targetLocale));
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("Error when translating {} from {} to {}", nodeMutation.getNode().getPath(), sourceLocale, targetLocale);
             }
+            throw new DataFetchingException(e);
         }
-        return null;
     }
 
     @GraphQLField
     @GraphQLDescription("Translate property")
-    public AssistedTranslationResponse translateProperty(
+    public GqlAssistedTranslationResponse translateProperty(
             @GraphQLName("propertyName") @GraphQLDescription("Property name to translate") String propertyName,
             @GraphQLName("sourceLocale") @GraphQLDescription("Locale to translate from") String sourceLocale,
             @GraphQLName("targetLocale") @GraphQLDescription("Locale to translate to") String targetLocale
 
     ) throws InterruptedException {
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Translating %s, property %s, from %s to %s", nodeMutation.getNode().getPath(), propertyName, sourceLocale, targetLocale));
+            logger.debug("Translating {}, property {}, from {} to {}", nodeMutation.getNode().getPath(), propertyName, sourceLocale, targetLocale);
         }
 
         TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
@@ -69,12 +68,12 @@ public class GqlJcrNodeMutationAssistedTranslation {
         }
 
         try {
-            return translatorService.translateProperty(nodeMutation.getNode().getNode(), propertyName, sourceLocale, targetLocale);
+            return new GqlAssistedTranslationResponse(translatorService.translateProperty(nodeMutation.getNode().getNode(), propertyName, sourceLocale, targetLocale));
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("Error when translating  {} of node {} from {} to {}", propertyName, nodeMutation.getNode().getPath(), sourceLocale, targetLocale);
             }
+            throw new DataFetchingException(e);
         }
-        return null;
     }
 }

@@ -7,7 +7,7 @@ import com.openai.models.ResponseFormatJsonObject;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseTextConfig;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.community.translation.assisted.graphql.TranslatedField;
 import org.jahia.community.translation.assisted.service.AssistedTranslationResponse;
@@ -16,7 +16,7 @@ import org.jahia.community.translation.assisted.service.TranslatorService;
 import org.jahia.community.translation.assisted.service.glossary.GlossaryService;
 import org.jahia.community.translation.assisted.service.glossary.ResolvedGlossary;
 import org.jahia.community.translation.assisted.service.impl.TranslationData;
-import org.jahia.community.translation.assisted.service.impl.deepl.DeepLAssistedTranslationResponseImpl;
+import org.jahia.community.translation.assisted.service.impl.AssistedTranslationResponseImpl;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
@@ -54,7 +54,7 @@ public class OpenAITranslatorService implements TranslatorService {
             .format(ResponseFormatJsonObject.builder().build())
             .build();
     private OpenAIClient openAIClient;
-    private MessageFormat messageFormat;
+    private String promptPattern;
     private ChatModel chatModel;
     private boolean available;
 
@@ -93,7 +93,7 @@ public class OpenAITranslatorService implements TranslatorService {
     }
 
     @Override
-    public Boolean isAvailable() {
+    public boolean isAvailable() {
         return available;
     }
 
@@ -104,7 +104,7 @@ public class OpenAITranslatorService implements TranslatorService {
             return;
         }
         logger.info("Activating OpenAI Translator Service");
-        final String authKey = properties.getOrDefault(OPENAI_API_KEY, null);
+        final String authKey = properties.get(OPENAI_API_KEY);
         if (authKey == null) {
             available = false;
             return;
@@ -112,7 +112,7 @@ public class OpenAITranslatorService implements TranslatorService {
         openAIClient = OpenAIOkHttpClient.builder().apiKey(authKey).build();
         if (properties.containsKey(TRANSLATION_OPENAI_PROMPT)) {
             String pattern = properties.get(TRANSLATION_OPENAI_PROMPT);
-            messageFormat = new MessageFormat(pattern.replace("{{sourceLanguage}}", "{0}").replace("{{targetLanguage}}", "{1}"));
+            promptPattern = pattern.replace("{{sourceLanguage}}", "{0}").replace("{{targetLanguage}}", "{1}");
         }
         if (properties.containsKey(TRANSLATION_OPENAI_MODEL)) {
             chatModel = ChatModel.of(properties.get(TRANSLATION_OPENAI_MODEL));
@@ -141,7 +141,7 @@ public class OpenAITranslatorService implements TranslatorService {
             Locale targetLocale = LanguageCodeConverters.getLocaleFromCode(targetLanguage);
             Locale sourceLocale = LanguageCodeConverters.getLocaleFromCode(sourceLanguage);
             MessageFormat languageInfo = new MessageFormat("{0} ({1})");
-            return new DeepLAssistedTranslationResponseImpl(true, MessageFormat.format("Page/resource {0} translated successfully from {1} to {2}",
+            return new AssistedTranslationResponseImpl(true, MessageFormat.format("Page/resource {0} translated successfully from {1} to {2}",
                     displayableName,
                     StringUtils.capitalize(languageInfo.format(new Object[]{sourceLocale.getDisplayLanguage(targetLocale), sourceLocale.getDisplayLanguage(sourceLocale)})),
                     StringUtils.capitalize(languageInfo.format(new Object[]{targetLocale.getDisplayLanguage(targetLocale), targetLocale.getDisplayLanguage(sourceLocale)}))));
@@ -153,7 +153,7 @@ public class OpenAITranslatorService implements TranslatorService {
 
     @Override
     public AssistedTranslationResponse translateProperty(JCRNodeWrapper node, String propertyName, String sourceLanguage, String targetLanguage) throws RepositoryException, InterruptedException {
-        return null;
+        throw new UnsupportedOperationException("translateProperty is not supported in OpenAITranslatorService, please use translateNode instead");
     }
 
     @Override
@@ -173,7 +173,7 @@ public class OpenAITranslatorService implements TranslatorService {
         // Use Responses API for translations.
         String sourceLanguageMapped = translationServicesManager.getTargetLanguages().getOrDefault(sourceLanguage, sourceLanguage);
         String targetLanguageMapped = translationServicesManager.getTargetLanguages().getOrDefault(targetLanguage, targetLanguage);
-        String baseSystemPrompt = messageFormat.format(new Object[]{sourceLanguageMapped, targetLanguageMapped})
+        String baseSystemPrompt = MessageFormat.format(promptPattern, sourceLanguageMapped, targetLanguageMapped)
                 + "\n" + JSON_RESPONSE_INSTRUCTION;
         List<Map.Entry<String, String>> textEntries = new ArrayList<>(data.getTexts().entrySet());
         if (textEntries.isEmpty()) {
@@ -318,12 +318,12 @@ public class OpenAITranslatorService implements TranslatorService {
         String joinedTokens = Arrays.stream(tokens)
                 .filter(StringUtils::isNotBlank)
                 .map(Pattern::quote)
-                .collect(Collectors.joining("\\\\s+"));
+                .collect(Collectors.joining("\\s+"));
         if (StringUtils.isBlank(joinedTokens)) {
             return false;
         }
 
-        Pattern termPattern = Pattern.compile("(?<![\\\\p{L}\\\\p{N}])" + joinedTokens + "(?![\\\\p{L}\\\\p{N}])", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        Pattern termPattern = Pattern.compile("(?<![\\p{L}\\p{N}])" + joinedTokens + "(?![\\p{L}\\p{N}])", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         return batchTexts.stream().anyMatch(text -> termPattern.matcher(text).find());
     }
 

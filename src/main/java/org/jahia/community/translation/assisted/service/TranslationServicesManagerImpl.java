@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -36,8 +35,6 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
     private static final Logger logger = LoggerFactory.getLogger(TranslationServicesManagerImpl.class);
     private static final Pattern VALUE_IDX_IN_FIELD = Pattern.compile("(.*)___(\\d+)___$");
     private final List<String> translatableNodeTypes = Arrays.asList(Constants.JAHIAMIX_MAIN_RESOURCE, "jmix:editorialContent", Constants.JAHIANT_PAGE, Constants.JAHIANT_CONTENT);
-    private final MessageFormat keyFormat = new MessageFormat("{0}/{1}");
-    private final MessageFormat indexedKeyFormat = new MessageFormat("{0}/{1}___{2}___");
     private ConfigurationAdmin configurationAdmin;
     private JCRPublicationService publicationService;
     private Map<String, String> targetLanguages;
@@ -71,7 +68,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
         return targetLanguages;
     }
 
-    public Map<String, String> transformTargetLanguagesPropertiesToMap(Map<String, String> properties) {
+    private Map<String, String> transformTargetLanguagesPropertiesToMap(Map<String, String> properties) {
         Map<String, String> map = new HashMap<>();
         properties.entrySet().stream().filter(e -> e.getKey().startsWith(PROP_PREFIX_TARGET_LANGUAGES)).forEach(e -> map.put(e.getKey().substring(PROP_PREFIX_TARGET_LANGUAGES.length()), e.getValue()));
         return map;
@@ -96,7 +93,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
                     }
                 } catch (RepositoryException e) {
                     if (logger.isErrorEnabled()) {
-                        logger.error("", e);
+                        logger.error("Could not find node", e);
                     }
                 }
             }
@@ -111,7 +108,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
             properties = relatedNode.getProperties();
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
-                logger.error("", e);
+                logger.error("Error reading properties for translation", e);
             }
             return;
         }
@@ -156,7 +153,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
     @Override
     public List<TranslatedField> getTranslatedFieldList(TranslationData data, boolean subtree, Map<String, String> translatedValues) {
         return data.completeTranslations(translatedValues).entrySet().stream()
-                .map(e -> new TranslatedField((subtree ? e.getKey() : org.apache.commons.lang.StringUtils.substringAfterLast(e.getKey(), SLASH)), e.getValue()))
+                .map(e -> new TranslatedField((subtree ? e.getKey() : StringUtils.substringAfterLast(e.getKey(), SLASH)), e.getValue()))
                 .collect(Collectors.toList());
     }
 
@@ -164,18 +161,18 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
     public void copyFieldValue(TranslatedField field, JCRSessionWrapper sessionTarget) {
         try {
             String path = field.getFieldName();
-            final JCRNodeWrapper targetNode = sessionTarget.getNode(org.apache.commons.lang.StringUtils.substringBeforeLast(path, SLASH));
-            final String propertyName = org.apache.commons.lang.StringUtils.substringAfterLast(path, SLASH);
+            final JCRNodeWrapper targetNode = sessionTarget.getNode(StringUtils.substringBeforeLast(path, SLASH));
+            final String propertyName = StringUtils.substringAfterLast(path, SLASH);
             if (field.getTranslatedValues() != null) {
                 targetNode.setProperty(propertyName, field.getTranslatedValues().toArray(new String[0]));
-            } else if (targetNode.hasProperty(propertyName) && org.apache.commons.lang.StringUtils.equals(targetNode.getPropertyAsString(propertyName), field.getTranslatedValue())) {
+            } else if (targetNode.hasProperty(propertyName) && StringUtils.equals(targetNode.getPropertyAsString(propertyName), field.getTranslatedValue())) {
                 logger.warn("{} is already translated", path);
             } else {
                 targetNode.setProperty(propertyName, field.getTranslatedValue());
             }
         } catch (RepositoryException e) {
             if (logger.isErrorEnabled()) {
-                logger.error("", e);
+                logger.error("Error while copying field", e);
             }
         }
     }
@@ -213,7 +210,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
                         return node.isNodeType(type);
                     } catch (RepositoryException e) {
                         if (logger.isErrorEnabled()) {
-                            logger.error("", e);
+                            logger.error("Error while looking for node matching type", e);
                         }
                         throw new JahiaRuntimeException(e);
                     }
@@ -230,7 +227,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
         try {
             definition = (ExtendedPropertyDefinition) property.getDefinition();
         } catch (RepositoryException e) {
-            logger.error("", e);
+            logger.error("No definition found", e);
             return PropertyAction.IGNORE;
         }
 
@@ -260,17 +257,19 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
         try {
             trackProperty(property, node, property.getValue().getString(), -1, tracker);
         } catch (RepositoryException e) {
-            logger.error("", e);
+            logger.error("Error while tracking property", e);
         }
     }
 
     private void trackProperty(Property property, JCRNodeWrapper node, String value, int index, BiConsumer<String, String> tracker) {
         try {
-            final String key = index >= 0 ? indexedKeyFormat.format(new Object[]{node.getPath(), property.getName(), index}) : keyFormat.format(new Object[]{node.getPath(), property.getName()});
+            final String key = index >= 0
+                    ? String.format("%s/%s___%d___", node.getPath(), property.getName(), index)
+                    : String.format("%s/%s", node.getPath(), property.getName());
             final String stringValue = StringUtils.trimToNull(value);
             if (stringValue != null) tracker.accept(key, stringValue);
         } catch (RepositoryException e) {
-            logger.error("", e);
+            logger.error("Error while tracking property", e);
         }
     }
 
@@ -320,7 +319,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
             }
 
         } catch (IOException e) {
-            logger.info("Error while deleting configuration for DeepL translator service: {}", e.getMessage());
+            logger.error("Error while deleting configuration for DeepL translator service: {}", e.getMessage());
         }
         try {
             if (StringUtils.isEmpty(openAIKey)) {
@@ -331,7 +330,7 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
             }
 
         } catch (IOException e) {
-            logger.info("Error while deleting configuration for OpenAI translator service: {}", e.getMessage());
+            logger.error("Error while deleting configuration for OpenAI translator service: {}", e.getMessage());
         }
         if (StringUtils.isEmpty(deeplAIKey) && StringUtils.isEmpty(openAIKey)) {
             logger.warn("No API key provided for DeepL and OpenAI translator services. No translator service will be available.");

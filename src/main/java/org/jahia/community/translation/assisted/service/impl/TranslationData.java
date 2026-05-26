@@ -1,7 +1,7 @@
 package org.jahia.community.translation.assisted.service.impl;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,9 +38,10 @@ public class TranslationData {
     }
 
     public Map<String, String> completeTranslations(Map<String, String> translations) {
-        duplicates.forEach((key, ref) -> translations.put(key, translations.get(ref)));
-        translations.putAll(copiedReferences);
-        return translations;
+        Map<String, String> result = new HashMap<>(translations);
+        duplicates.forEach((key, ref) -> result.put(key, result.get(ref)));
+        result.putAll(copiedReferences);
+        return result;
     }
 
     public void trackCopiedValue(String key, String text) {

@@ -16,5 +16,5 @@ public interface TranslatorService {
 
     String getProviderKey();
 
-    Boolean isAvailable();
+    boolean isAvailable();
 }

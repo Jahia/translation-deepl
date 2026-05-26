@@ -5,7 +5,7 @@ import com.deepl.api.DeepLException;
 import com.deepl.api.GlossaryNotFoundException;
 import com.deepl.api.MultilingualGlossaryInfo;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component(service = DeepLGlossaryManager.class, immediate = true)
@@ -25,7 +26,7 @@ public class DeepLGlossaryManager {
     private static final long GLOSSARY_MAX_AGE_MILLIS = Duration.ofDays(30).toMillis();
     private static final long GLOSSARY_CLEANUP_INTERVAL_MILLIS = Duration.ofHours(12).toMillis();
 
-    private final Map<String, CachedGlossary> glossaryCache = new HashMap<>();
+    private final Map<String, CachedGlossary> glossaryCache = new ConcurrentHashMap<>();
     private volatile long lastGlossaryCleanupTimeMillis;
 
     public void reset() {
@@ -35,7 +36,7 @@ public class DeepLGlossaryManager {
         }
     }
 
-    public String getOrCreateGlossaryId(DeepLClient translator, String srcLanguage, String destLanguage, Map<String, String> glossaryTerms) throws InterruptedException, DeepLException {
+    public synchronized String getOrCreateGlossaryId(DeepLClient translator, String srcLanguage, String destLanguage, Map<String, String> glossaryTerms) throws InterruptedException, DeepLException {
         if (translator == null || MapUtils.isEmpty(glossaryTerms)) {
             return null;
         }
