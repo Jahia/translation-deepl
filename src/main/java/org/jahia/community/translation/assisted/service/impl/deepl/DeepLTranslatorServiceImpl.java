@@ -18,6 +18,8 @@ import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionFactory;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.utils.LanguageCodeConverters;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -86,7 +88,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
     }
 
     @Activate
-    public void activate(Map<String, String> properties) {
+    public void activate(Map<String, String> properties, BundleContext bundleContext) {
         translator = null;
         deepLGlossaryManager.reset();
         if (properties == null) {
@@ -99,7 +101,7 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
             available = false;
             return;
         }
-        translator = initializeTranslator(authKey);
+        translator = initializeTranslator(authKey, bundleContext.getBundle().getVersion().toString());
         if (translator == null) {
             available = false;
             return;
@@ -108,13 +110,13 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
         available = true;
     }
 
-    private DeepLClient initializeTranslator(String authKey) {
+    private DeepLClient initializeTranslator(String authKey, String version) {
         if (StringUtils.isBlank(authKey)) {
             logger.warn("{} not defined. Please add it to {}", DEEPL_API_KEY, SERVICE_CONFIG_FILE_FULLNAME);
             return null;
         }
 
-        final DeepLClientOptions options = (DeepLClientOptions) new DeepLClientOptions().setAppInfo("ai-assisted-translations", "1.2.0").setMaxRetries(3).setTimeout(Duration.ofSeconds(3));
+        final DeepLClientOptions options = (DeepLClientOptions) new DeepLClientOptions().setAppInfo("ai-assisted-translations", version).setMaxRetries(3).setTimeout(Duration.ofSeconds(3));
 
         final String proxyHost = System.getProperty("https.proxyHost");
         final String proxyPort = System.getProperty("https.proxyPort");
