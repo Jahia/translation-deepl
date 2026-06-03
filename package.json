@@ -1,6 +1,6 @@
 {
     "name": "@jahia/ai-assisted-translations",
-    "version": "2.0.1",
+    "version": "2.0.2-SNAPSHOT",
     "scripts": {
         "build": "yarn webpack",
         "webpack": "webpack",
