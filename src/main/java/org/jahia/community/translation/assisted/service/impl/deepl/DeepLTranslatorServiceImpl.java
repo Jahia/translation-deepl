@@ -236,20 +236,45 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
             Locale targetLocaleFromCode = LanguageCodeConverters.getLocaleFromCode(destLanguage);
             List<Language> translatorSourceLanguages = translator.getSourceLanguages();
             List<Language> translatorTargetLanguages = translator.getTargetLanguages();
-            String deeplSrcLanguage = translatorSourceLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), sourceLocaleFromCode.getLanguage())).findFirst().map(Language::getCode).orElse(null);
-            String deeplTargetLanguage = translatorTargetLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), targetLocaleFromCode.getLanguage())).findFirst().map(Language::getCode).orElse(null);
+            String sourceLocaleFromCodeLanguage = sourceLocaleFromCode.getLanguage();
+            String targetLocaleFromCodeLanguage = translationServicesManager.getTargetLanguages().getOrDefault(targetLocaleFromCode.getLanguage(),  targetLocaleFromCode.getLanguage());
+            String deeplSrcLanguage = translatorSourceLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), sourceLocaleFromCodeLanguage)).findFirst().map(Language::getCode).orElse(null);
+            String deeplTargetLanguage = translatorTargetLanguages.stream().filter(l -> StringUtils.equalsIgnoreCase(l.getCode(), targetLocaleFromCodeLanguage)).findFirst().map(Language::getCode).orElse(null);
             if (deeplSrcLanguage == null || deeplTargetLanguage == null) {
-                throw new DataFetchingException(String.format("DeepL doesn't support the language %s", deeplSrcLanguage == null ? sourceLocaleFromCode.getDisplayName() : targetLocaleFromCode.getDisplayName()));
+                throw new DataFetchingException(String.format("DeepL doesn't support the language %s (%s)", deeplSrcLanguage == null ? sourceLocaleFromCode.getDisplayName() : targetLocaleFromCode.getDisplayName(),deeplSrcLanguage == null ? sourceLocaleFromCodeLanguage : targetLocaleFromCodeLanguage));
             }
-            final String destDeepLLanguage = translationServicesManager.getTargetLanguages().getOrDefault(deeplTargetLanguage, deeplTargetLanguage);
+            deeplSrcLanguage = deeplSrcLanguage.toUpperCase();
+            deeplTargetLanguage = deeplTargetLanguage.toUpperCase();
             TextTranslationOptions textTranslationOptions = new TextTranslationOptions();
             textTranslationOptions.setTagHandling("html");
             textTranslationOptions.setTagHandlingVersion("v2");
-            String glossaryId = deepLGlossaryManager.getOrCreateGlossaryId(translator, deeplSrcLanguage, destDeepLLanguage, glossaryTerms);
-            if (StringUtils.isNotBlank(glossaryId)) {
-                textTranslationOptions.setGlossaryId(glossaryId);
+            String glossaryId;
+            boolean exception = false;
+            try {
+                glossaryId = deepLGlossaryManager.getOrCreateGlossaryId(translator, deeplSrcLanguage, deeplTargetLanguage, glossaryTerms);
+                if (StringUtils.isNotBlank(glossaryId)) {
+                    textTranslationOptions.setGlossaryId(glossaryId);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (DeepLException e) {
+                exception = true;
+                logger.warn("Unable to create or get DeepL glossary, translations will be done without glossary for language pair {} / {}: {}", deeplSrcLanguage, deeplTargetLanguage, e.getMessage());
             }
-            results = translator.translateText(srcTexts, deeplSrcLanguage, destDeepLLanguage, textTranslationOptions);
+            if(exception) {
+                try {
+                    logger.info("Retrying to create or get DeepL glossary without language code conversion for language pair {} / {}", sourceLocaleFromCode.getLanguage().toUpperCase(), targetLocaleFromCode.getLanguage().toUpperCase());
+                    glossaryId = deepLGlossaryManager.getOrCreateGlossaryId(translator, sourceLocaleFromCode.getLanguage().toUpperCase(), targetLocaleFromCode.getLanguage().toUpperCase(), glossaryTerms);
+                    if (StringUtils.isNotBlank(glossaryId)) {
+                        textTranslationOptions.setGlossaryId(glossaryId);
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (DeepLException e) {
+                    logger.warn("Unable to create or get DeepL glossary, translations will be done without glossary for language pair {} / {}: {}", sourceLocaleFromCode.getLanguage().toUpperCase(), targetLocaleFromCode.getLanguage().toUpperCase(), e.getMessage());
+                }
+            }
+            results = translator.translateText(srcTexts, deeplSrcLanguage, deeplTargetLanguage, textTranslationOptions);
         } catch (DeepLException e) {
             if (logger.isErrorEnabled()) {
                 logger.error("Failed to translate content", e);

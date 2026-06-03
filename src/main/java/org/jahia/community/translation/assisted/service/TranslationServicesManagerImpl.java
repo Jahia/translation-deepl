@@ -34,7 +34,8 @@ import static org.jahia.community.translation.assisted.AssistedTranslationsConst
 public class TranslationServicesManagerImpl implements TranslationServicesManager {
     private static final Logger logger = LoggerFactory.getLogger(TranslationServicesManagerImpl.class);
     private static final Pattern VALUE_IDX_IN_FIELD = Pattern.compile("(.*)___(\\d+)___$");
-    private final List<String> translatableNodeTypes = Arrays.asList(Constants.JAHIAMIX_MAIN_RESOURCE, "jmix:editorialContent", Constants.JAHIANT_PAGE, Constants.JAHIANT_CONTENT);
+    private  List<String> translatableNodeTypes;
+    private List<String> translatableNodeTypesForSubtree;
     private ConfigurationAdmin configurationAdmin;
     private JCRPublicationService publicationService;
     private Map<String, String> targetLanguages;
@@ -59,6 +60,11 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
         final String deeplAIKey = properties.getOrDefault(DEEPL_API_KEY, "");
         validateAtLeastOneKeyExist(deeplAIKey, openAIKey);
         targetLanguages = transformTargetLanguagesPropertiesToMap(properties);
+        String nodetypes = properties.getOrDefault("translation.nodetypes","jnt:page,jmix:mainResource,jmix:editorialContent,jnt:content,jnt:category");
+        translatableNodeTypes = Arrays.asList(nodetypes.split(","));
+        logger.info("Found translation nodetypes: {}", translatableNodeTypes.stream().map(StringUtils::trimToEmpty).collect(Collectors.joining(", ")));
+        String treeNodetypes = properties.getOrDefault("translation.subtree.nodetypes","jnt:category");
+        translatableNodeTypesForSubtree = Arrays.asList(treeNodetypes.split(","));
         configureOpenAI(properties, openAIKey);
         configureDeepL(deeplAIKey);
     }
@@ -81,7 +87,15 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
             languages.add(node.getSession().getLocale().toString());
             // Use publication service to get the list of nodes part of this node publication
             Set<String> uuids = new HashSet<>();
-            List<PublicationInfo> publicationInfo = publicationService.getPublicationInfo(node.getIdentifier(), languages, false, true, false, Constants.EDIT_WORKSPACE, Constants.LIVE_WORKSPACE);
+            // in case of nodetypes like jnt:category we need to get the whole subtree
+            boolean allsubtree = translatableNodeTypesForSubtree.stream().anyMatch(type -> {
+                try {
+                    return node.isNodeType(type);
+                } catch (RepositoryException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            List<PublicationInfo> publicationInfo = publicationService.getPublicationInfo(node.getIdentifier(), languages, false, true, allsubtree, Constants.EDIT_WORKSPACE, Constants.LIVE_WORKSPACE);
             publicationInfo.forEach(p -> uuids.addAll(p.getAllUuids(false, true)));
 
             JCRSessionWrapper session = node.getSession();
