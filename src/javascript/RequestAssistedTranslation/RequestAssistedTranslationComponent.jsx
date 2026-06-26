@@ -34,7 +34,7 @@ export const RequestAssistedTranslationComponent = ({
         return false;
     }
 
-    const sourceLanguage = editorConfigContext?.sideBySideContext?.lang || editorContext.nodeData?.translationLanguages?.[0];
+    const sourceLanguage = editorConfigContext?.sideBySideContext?.lang || editorContext.nodeData?.translationLanguages?.find(lang => lang !== editorContext.lang);
     const enabled = !editorContext.nodeData?.lockedAndCannotBeEdited && sourceLanguage !== undefined;
 
     return (

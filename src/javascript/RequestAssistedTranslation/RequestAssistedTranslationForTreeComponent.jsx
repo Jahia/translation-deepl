@@ -44,7 +44,7 @@ export const RequestAssistedTranslationForTreeComponent = ({
             onClick={() => {
                 componentRenderer.render('requestTranslationAiAssistedForAllLanguages', RequestAssistedTranslation, {
                     path: path,
-                    sourceLanguage: siteInfo.defaultLanguage,
+                    sourceLanguage: language === siteInfo.defaultLanguage ? siteInfo.languages.find(lang => lang.language !== language)?.language : siteInfo.defaultLanguage,
                     targetLanguage: language,
                     siteLanguages: siteInfo.languages,
                     availableSourceLanguages: siteInfo.languages,

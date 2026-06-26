@@ -182,9 +182,9 @@ export const RequestAssistedTranslation = ({
 
                                     return [{
                                         value: optionLanguage.language,
-                                        label: `${optionLanguage.displayName} (${optionLanguage.uiLanguageDisplayName})`
+                                        label: `${optionLanguage.displayName}`
                                     }];
-                                })}
+                                }).filter(element => element.value !== targetLanguage)}
                                 onChange={(e, item) => setSelected(findLanguageObject(siteLanguages, item.value))}
                             />
                         </>}
