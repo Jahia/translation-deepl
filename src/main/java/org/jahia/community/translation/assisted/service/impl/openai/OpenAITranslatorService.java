@@ -198,13 +198,16 @@ public class OpenAITranslatorService implements TranslatorService {
                 continue;
             }
 
-            JSONObject requestJson = new JSONObject(textsToTranslate);
+            // org.json escapes "</" as "<\/" (a safety measure for embedding JSON in HTML <script> tags).
+            // Sending that to the model makes it preserve the literal backslash and re-escape it, so closing
+            // tags come back as "<\/p>". Undo the over-escaping so the model sees clean HTML.
+            String requestJson = new JSONObject(textsToTranslate).toString().replace("<\\/", "</");
             if (logger.isDebugEnabled()) {
                 logger.debug("Calling OpenAI API with requested translation batch [{}, {})", startIdx, endIdx);
             }
 
             String systemPrompt = baseSystemPrompt + buildGlossaryInstruction(glossaryTerms, textsToTranslate.values());
-            Response response = createTranslationResponse(requestJson.toString(), previousResponseId, systemPrompt);
+            Response response = createTranslationResponse(requestJson, previousResponseId, systemPrompt);
             previousResponseId = response.id();
             Optional<JSONObject> responseJson = extractOutputText(response).flatMap(this::parseJsonObject);
 
