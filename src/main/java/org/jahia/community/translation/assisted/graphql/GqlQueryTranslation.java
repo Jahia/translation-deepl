@@ -5,9 +5,9 @@ import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLTypeExtension;
 import org.jahia.community.translation.assisted.service.TranslatorService;
+import org.jahia.community.translation.assisted.service.TranslatorServiceResolver;
 import org.jahia.modules.graphql.provider.dxm.DataFetchingException;
 import org.jahia.modules.graphql.provider.dxm.node.GqlJcrNode;
-import org.jahia.osgi.BundleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,21 +33,17 @@ public class GqlQueryTranslation {
             @GraphQLName("targetLanguage") @GraphQLDescription("Language to translate to") String targetLocale
     ) {
         try {
-            TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
+            // The resolver already filters on availability, so anything it returns is usable.
+            TranslatorService translatorService = TranslatorServiceResolver.resolve().orElse(null);
             if (translatorService == null) {
-                logger.warn("No TranslatorService available – translation service is not configured");
+                logger.warn("No TranslatorService available – no translation provider is configured");
                 return Collections.emptyList();
             }
-            if (translatorService.isAvailable()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Translating %s from %s to %s", node.getPath(), sourceLocale, targetLocale));
-                }
-                logger.info("Translating from {} to {} with provider {}", sourceLocale, targetLocale, translatorService.getProviderKey());
-                return translatorService.suggestTranslationForNode(node.getNode(), sourceLocale, targetLocale);
-            } else {
-                logger.warn("TranslatorService with provider key {} is not available", translatorService.getProviderKey());
-                return Collections.emptyList();
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Translating %s from %s to %s", node.getPath(), sourceLocale, targetLocale));
             }
+            logger.info("Translating from {} to {} with provider {}", sourceLocale, targetLocale, translatorService.getProviderKey());
+            return translatorService.suggestTranslationForNode(node.getNode(), sourceLocale, targetLocale);
         } catch (RepositoryException e) {
             throw new DataFetchingException("Error when suggesting translation", e);
         } catch (InterruptedException e) {
