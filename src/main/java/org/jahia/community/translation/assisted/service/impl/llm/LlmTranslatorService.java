@@ -74,8 +74,9 @@ public class LlmTranslatorService implements TranslatorService {
      */
     private static final String DEFAULT_PROMPT_PATTERN = "You are a translation engine. Return only strict JSON object key->translated text. Preserve HTML tags/entities exactly. Preserve the JSON structure as received, translate only the values and keep the keys exactly as they are. The source language is {{sourceLanguage}} and the target language is {{targetLanguage}}. Those languages are expressed as ISO code with or without regional variations, if the variation is specified please ensure the translation match the regional specification. For example, if the target language is PT-BR, please ensure that the translation is in Brazilian Portuguese and not European Portuguese.";
 
-    private String promptPattern;
-    private String model;
+    // Reassigned by @Modified on every configuration change, read by request threads.
+    private volatile String promptPattern;
+    private volatile String model;
 
     @Reference
     private GenAiService genAiService;
