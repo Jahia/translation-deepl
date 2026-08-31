@@ -82,6 +82,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@faker-js/faker@npm:^10.3.0":
+  version: 10.6.0
+  resolution: "@faker-js/faker@npm:10.6.0"
+  checksum: 10c0/ee285d597249a019f3a11b6705d1908616ea9e880207ca4f89e6205dbf7e98abd1129f025f5da19484f5e88f556b0629a4363745ff0bbaf1984ebf54cffde6e3
+  languageName: node
+  linkType: hard
+
 "@graphql-typed-document-node/core@npm:^3.1.1":
   version: 3.1.1
   resolution: "@graphql-typed-document-node/core@npm:3.1.1"
@@ -121,11 +128,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jahia/cypress@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@jahia/cypress@npm:7.0.0"
+"@jahia/cypress@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "@jahia/cypress@npm:8.4.0"
   dependencies:
     "@apollo/client": "npm:^3.4.9"
+    "@faker-js/faker": "npm:^10.3.0"
+    compare-versions: "npm:^6.1.1"
     cypress-real-events: "npm:^1.11.0"
     graphql: "npm:^15.5.0"
     graphql-tag: "npm:^2.11.0"
@@ -134,7 +143,7 @@ __metadata:
     ci.startup: ./ci.startup.sh
     env.debug: ./env.debug.sh
     env.run: ./env.run.sh
-  checksum: 10c0/9569ebc04139b9d6e160a763367db1e096951c0442e531837a2582b82c7f7a45d21bbf940241b94eec81f8e2b6cf1a23cce57ab0133cfc9ca7604d0efbb5870f
+  checksum: 10c0/8ae40d94931aab5c6bf498838fa035f473c753777de21c57164565a34588cba1efe1cbcd0fd818df4521ad027d4263db4cd23f440c5e5dd6ed505111de36ee31
   languageName: node
   linkType: hard
 
@@ -180,7 +189,7 @@ __metadata:
   resolution: "@jahia/javascript-modules-engine-cypress@workspace:."
   dependencies:
     "@4tw/cypress-drag-drop": "npm:^2.3.0"
-    "@jahia/cypress": "npm:^7.0.0"
+    "@jahia/cypress": "npm:^8.4.0"
     "@jahia/jahia-reporter": "npm:^1.6.0"
     "@jahia/jcontent-cypress": "npm:^3.6.0-tests.2"
     "@types/decompress": "npm:^4.2.7"
