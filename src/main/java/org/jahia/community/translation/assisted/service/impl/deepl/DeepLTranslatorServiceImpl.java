@@ -97,7 +97,10 @@ public class DeepLTranslatorServiceImpl implements TranslatorService {
         }
         logger.info("Activating DeeplTranslator Service");
         final String authKey = properties.get(DEEPL_API_KEY);
-        if (authKey == null || properties.get(OPENAI_API_KEY) != null) {
+        // Availability used to also be revoked when an OpenAI key was present, to give the LLM path
+        // precedence. Precedence is now decided by service ranking plus the availability check in
+        // TranslatorServiceResolver, so DeepL only depends on its own key.
+        if (authKey == null) {
             available = false;
             return;
         }

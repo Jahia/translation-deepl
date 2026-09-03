@@ -5,9 +5,9 @@ import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLTypeExtension;
 import org.jahia.community.translation.assisted.service.TranslatorService;
+import org.jahia.community.translation.assisted.service.TranslatorServiceResolver;
 import org.jahia.modules.graphql.provider.dxm.DataFetchingException;
 import org.jahia.modules.graphql.provider.dxm.node.GqlJcrNodeMutation;
-import org.jahia.osgi.BundleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +33,9 @@ public class GqlJcrNodeMutationAssistedTranslation {
             logger.debug("Translating {} from {} to {}", nodeMutation.getNode().getPath(), sourceLocale, targetLocale);
         }
 
-        TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
+        TranslatorService translatorService = TranslatorServiceResolver.resolve().orElse(null);
         if (translatorService == null) {
-            logger.warn("No TranslatorService available – translation service is not configured");
+            logger.warn("No TranslatorService available – no translation provider is configured");
             throw new DataFetchingException("No translation service available. Please check the module configuration.");
         }
 
@@ -61,9 +61,9 @@ public class GqlJcrNodeMutationAssistedTranslation {
             logger.debug("Translating {}, property {}, from {} to {}", nodeMutation.getNode().getPath(), propertyName, sourceLocale, targetLocale);
         }
 
-        TranslatorService translatorService = BundleUtils.getOsgiService(TranslatorService.class, null);
+        TranslatorService translatorService = TranslatorServiceResolver.resolve().orElse(null);
         if (translatorService == null) {
-            logger.warn("No TranslatorService available – translation service is not configured");
+            logger.warn("No TranslatorService available – no translation provider is configured");
             throw new DataFetchingException("No translation service available. Please check the module configuration.");
         }
 

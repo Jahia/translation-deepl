@@ -3,21 +3,22 @@
 This module adds AI-assisted translation capabilities to Jahia content (pages and content nodes), with support for:
 
 - DeepL translation
-- OpenAI translation
+- LLM translation through the platform [genai-connector](https://github.com/Jahia/genai-connector) module — with any provider the connector supports (Anthropic, OpenAI and OpenAI-compatible endpoints, Mistral, Azure OpenAI)
 - GraphQL translation suggestions and mutations
 - CSV-based glossaries managed inside Jahia
 
 ## Installation
 
-1. In Jahia, go to `Administration -> Server settings -> System components -> Modules`.
-2. Upload `ai-assisted-translations-X.X.X.jar`.
-3. Ensure the module is started.
-4. Activate the module on the websites where you want to use it.
+1. Deploy the [genai-connector](https://github.com/Jahia/genai-connector) module — it is declared in `Jahia-Depends`, so this module will not start without it.
+2. In Jahia, go to `Administration -> Server settings -> System components -> Modules`.
+3. Upload `ai-assisted-translations-X.X.X.jar`.
+4. Ensure the module is started.
+5. Activate the module on the websites where you want to use it.
 
 ## Runtime behavior
 
 - The module can expose one translation provider at a time through `TranslatorService`.
-- If both API keys are configured, OpenAI has priority over DeepL in current service activation logic.
+- A request goes to the highest-ranked translator that reports itself available: the LLM one (ranking `10`) when the genai-connector has a usable provider configured, DeepL (ranking `5`) otherwise.
 - From jContent, right click on `jnt:page` or `jnt:content` and use the translation menu:
   - translate to all site languages
   - translate to a specific target language
@@ -139,20 +140,36 @@ Main configuration file:
 
 - `src/main/resources/META-INF/configurations/org.jahia.community.translation.assisted.cfg`
 
+The **LLM provider, its API key and the default model** are *not* configured here: they live in
+the genai-connector module's own configuration (`org.jahia.modules.genai.cfg` — see its README).
+This module never sees a key.
+
 ### Main keys
 
 - `translation.deepl.api.key`
   - DeepL API key.
-- `translation.openai.api.key`
-  - OpenAI API key.
-- `translation.openai.model`
-  - OpenAI model used by translation requests.
-- `translation.openai.prompt`
-  - Base system prompt template.
+- `translation.llm.model`
+  - Optional model override, applied to translation requests only.
+  - Empty (the default) uses the model configured in the genai-connector.
+- `translation.llm.prompt`
+  - Base instructions template sent with every translation batch.
   - Supports `{{sourceLanguage}}` and `{{targetLanguage}}` placeholders.
 - `targetLanguages.<code>`
   - Optional mapping between Jahia language codes and provider-specific language codes.
   - Example: `targetLanguages.en=EN-US`, `targetLanguages.pt=PT-BR`.
+
+### Migration from 2.0.x
+
+The LLM path moved from an embedded OpenAI SDK to the genai-connector module:
+
+| Legacy key | Status |
+|---|---|
+| `translation.openai.api.key` | **Ignored** (logs a warning). Move the key to `org.jahia.modules.genai.cfg`; to keep using OpenAI, set that connector's provider to `openai`. |
+| `translation.openai.model` | Still read as a fallback for `translation.llm.model`, with a deprecation warning. |
+| `translation.openai.prompt` | Still read as a fallback for `translation.llm.prompt`, with a deprecation warning. |
+
+The secondary `org.jahia.community.translation.assisted.openai` configuration is obsolete and is
+deleted on startup, along with the API key it held.
 
 ### Glossary-related keys
 

@@ -12,6 +12,7 @@ import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.PublicationInfo;
 import org.jahia.services.content.nodetypes.ExtendedPropertyDefinition;
 import org.jahia.services.content.nodetypes.SelectorType;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -56,16 +57,15 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
             logger.warn("Missing configurations: {}", SERVICE_CONFIG_FILE_FULLNAME);
             return;
         }
-        final String openAIKey = properties.getOrDefault(OPENAI_API_KEY, "");
         final String deeplAIKey = properties.getOrDefault(DEEPL_API_KEY, "");
-        validateAtLeastOneKeyExist(deeplAIKey, openAIKey);
+        dropLegacyOpenAiConfiguration(properties);
+        validateDeepLKey(deeplAIKey);
         targetLanguages = transformTargetLanguagesPropertiesToMap(properties);
         String nodetypes = properties.getOrDefault("translation.nodetypes","jnt:page,jmix:mainResource,jmix:editorialContent,jnt:content,jnt:category");
         translatableNodeTypes = Arrays.asList(nodetypes.split(","));
         logger.info("Found translation nodetypes: {}", translatableNodeTypes.stream().map(StringUtils::trimToEmpty).collect(Collectors.joining(", ")));
         String treeNodetypes = properties.getOrDefault("translation.subtree.nodetypes","jnt:category");
         translatableNodeTypesForSubtree = Arrays.asList(treeNodetypes.split(","));
-        configureOpenAI(properties, openAIKey);
         configureDeepL(deeplAIKey);
     }
 
@@ -303,27 +303,9 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
 
     // Private configuration methods
 
-    private void configureOpenAI(Map<String, String> properties, String openAIKey) {
-        if (StringUtils.isNotEmpty(openAIKey)) {
-            try {
-                Configuration configuration = configurationAdmin.getConfiguration(SERVICE_CONFIG_FILE_NAME_OPENAI);
-                Map<String, String> configProperties = new HashMap<>();
-                configProperties.put(OPENAI_API_KEY, openAIKey);
-                if (properties.containsKey(TRANSLATION_OPENAI_PROMPT)) {
-                    configProperties.put(TRANSLATION_OPENAI_PROMPT, properties.get(TRANSLATION_OPENAI_PROMPT));
-                }
-                if (properties.containsKey(TRANSLATION_OPENAI_MODEL)) {
-                    configProperties.put(TRANSLATION_OPENAI_MODEL, properties.get(TRANSLATION_OPENAI_MODEL));
-                }
-                configuration.updateIfDifferent(new MapToDictionary(configProperties));
-            } catch (IOException e) {
-                throw new JahiaRuntimeException(e);
-            }
-        }
-    }
-
-    private void validateAtLeastOneKeyExist(String deeplAIKey, String openAIKey) {
-        // For non-existing key or empty key, we delete the configuration to make sure the service is not available. If both keys are empty, we log a warning.
+    private void validateDeepLKey(String deeplAIKey) {
+        // DeepL is gated by ConfigurationPolicy.REQUIRE on its own PID: deleting that configuration
+        // when no key is set is what keeps its component from registering.
         try {
             if (StringUtils.isEmpty(deeplAIKey)) {
                 Configuration configuration = configurationAdmin.getConfiguration(SERVICE_CONFIG_FILE_NAME_DEEPL);
@@ -335,25 +317,40 @@ public class TranslationServicesManagerImpl implements TranslationServicesManage
         } catch (IOException e) {
             logger.error("Error while deleting configuration for DeepL translator service: {}", e.getMessage());
         }
-        try {
-            if (StringUtils.isEmpty(openAIKey)) {
-                Configuration configuration = configurationAdmin.getConfiguration(SERVICE_CONFIG_FILE_NAME_OPENAI);
-                if (configuration != null) {
-                    configuration.delete();
-                }
-            }
-
-        } catch (IOException e) {
-            logger.error("Error while deleting configuration for OpenAI translator service: {}", e.getMessage());
-        }
-        if (StringUtils.isEmpty(deeplAIKey) && StringUtils.isEmpty(openAIKey)) {
-            logger.warn("No API key provided for DeepL and OpenAI translator services. No translator service will be available.");
-        } else if (!StringUtils.isEmpty(deeplAIKey) && !StringUtils.isEmpty(openAIKey)) {
-            logger.info("API keys provided for both DeepL and OpenAI translator services. Both services will be available.");
-        } else if (StringUtils.isNotEmpty(openAIKey)) {
-            logger.info("API key provided for OpenAI translator service. Only OpenAI translator service will be available.");
+        if (StringUtils.isEmpty(deeplAIKey)) {
+            logger.info("No DeepL API key provided. Translations will only be available if a provider is configured "
+                    + "in the genai-connector module.");
         } else {
-            logger.info("API key provided for DeepL translator service. Only DeepL translator service will be available.");
+            logger.info("API key provided for the DeepL translator service.");
+        }
+    }
+
+    /**
+     * Handles configurations written before the LLM path moved to the genai-connector module
+     * (jahia-private#5366): the OpenAI API key is no longer used here, and the secondary
+     * configuration it used to be pushed into no longer backs any component.
+     */
+    private void dropLegacyOpenAiConfiguration(Map<String, String> properties) {
+        if (StringUtils.isNotEmpty(properties.get(LEGACY_OPENAI_API_KEY))) {
+            logger.warn("The key {} found in {} is IGNORED since the migration to the genai-connector module: "
+                            + "configure the provider, its API key and its model in org.jahia.modules.genai.cfg instead.",
+                    LEGACY_OPENAI_API_KEY, SERVICE_CONFIG_FILE_FULLNAME);
+        }
+        try {
+            // listConfigurations, not getConfiguration: the latter would create the very
+            // configuration we are trying to get rid of when it is already gone.
+            Configuration[] configurations = configurationAdmin.listConfigurations(
+                    "(service.pid=" + LEGACY_OPENAI_CONFIG_FILE_NAME + ")");
+            if (configurations == null) {
+                return;
+            }
+            for (Configuration configuration : configurations) {
+                configuration.delete();
+            }
+            logger.info("Deleted the obsolete {} configuration left over by an earlier version, "
+                    + "along with the API key it held.", LEGACY_OPENAI_CONFIG_FILE_NAME);
+        } catch (IOException | InvalidSyntaxException e) {
+            logger.error("Error while deleting the obsolete configuration {}: {}", LEGACY_OPENAI_CONFIG_FILE_NAME, e.getMessage());
         }
     }
 
